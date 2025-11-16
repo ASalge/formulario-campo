@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Formulários de Campo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    }
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+    header {
+      background: #111827;
+      color: #f9fafb;
+      padding: 12px 16px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    main {
+      padding: 12px;
+      max-width: 900px;
+      margin: 0 auto 40px auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      margin-bottom: 10px;
+      background: #f9fafb;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .row > div {
+      flex: 1;
+      min-width: 140px;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #f9fafb;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: #f9fafb;
+    }
+    .btn-small {
+      font-size: 12px;
+      padding: 4px 10px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .hidden {
+      display: none;
+    }
+    .nav-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    @media (min-width: 600px) {
+      .nav-buttons {
+        flex-direction: row;
+      }
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #4b5563;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+    .record {
+      border-top: 1px solid #e5e7eb;
+      padding-top: 8px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .record:first-child {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .record-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .small-muted {
+      font-size: 11px;
+      color: #6b7280;
+    }
+    .section-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin: 10px 0 4px 0;
+      color: #374151;
+    }
+    .layer-card {
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 8px;
+      margin-bottom: 8px;
+      background: #f9fafb;
+    }
+    .voc-card {
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 8px;
+      margin-bottom: 8px;
+      background: #f9fafb;
+    }
+    .inline-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .inline-checkbox input[type="checkbox"] {
+      width: auto;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>Formulários de Campo</header>
+  <main>
+    <!-- Tela inicial -->
+    <section id="home" class="card">
+      <h2>Escolha o formulário</h2>
+      <p style="font-size: 13px; color: #4b5563; margin-top: 0;">
+        Selecione o tipo de registro que você deseja preencher.
+      </p>
+      <div class="nav-buttons">
+        <button class="btn-primary" onclick="showSection('diario')">
+          Diário de Atividades
+        </button>
+        <button class="btn-secondary" onclick="showSection('sondagem')">
+          Sondagem / Instalação de Poço
+        </button>
+      </div>
+    </section>
+
+    <!-- Diário de Atividades -->
+    <section id="diario" class="hidden">
+      <div class="card">
+        <h2>Diário de Atividades</h2>
+        <p class="small-muted">
+          Baseado no formulário "DIÁRIO DE ATIVIDADES".
+        </p>
+        <form id="form-diario" onsubmit="salvarDiario(event)">
+          <div class="row">
+            <div>
+              <label for="diario-projeto">Nº do Projeto</label>
+              <input type="text" id="diario-projeto" required />
+            </div>
+            <div>
+              <label for="diario-cliente">Cliente</label>
+              <input type="text" id="diario-cliente" />
+            </div>
+          </div>
+
+          <label for="diario-local">Local</label>
+          <input type="text" id="diario-local" />
+
+          <div class="row">
+            <div>
+              <label for="diario-data">Data</label>
+              <input type="date" id="diario-data" required />
+            </div>
+            <div>
+              <label for="diario-horario">Horário de trabalho</label>
+              <input
+                type="text"
+                id="diario-horario"
+                placeholder="Ex.: 08:00 - 17:00"
+              />
+            </div>
+          </div>
+
+          <label for="diario-clima">Condições climáticas</label>
+          <select id="diario-clima">
+            <option value="">Selecione</option>
+            <option value="Boa">Boa</option>
+            <option value="Chuva">Chuva</option>
+            <option value="Chuva operável">Chuva operável</option>
+            <option value="Inoperável">Inoperável</option>
+          </select>
+
+          <label for="diario-atividades">Atividades desenvolvidas</label>
+          <textarea
+            id="diario-atividades"
+            placeholder="Descreva as atividades executadas no dia."
+          ></textarea>
+
+          <label for="diario-observacoes">Observações</label>
+          <textarea
+            id="diario-observacoes"
+            placeholder="Ocorrências relevantes, restrições, comunicação com cliente, etc."
+          ></textarea>
+
+          <div class="row">
+            <div>
+              <label for="diario-responsavel">Responsável</label>
+              <input
+                type="text"
+                id="diario-responsavel"
+                placeholder="Técnico responsável"
+              />
+            </div>
+            <div>
+              <label for="diario-auxiliares">Auxiliares / Equipe</label>
+              <input
+                type="text"
+                id="diario-auxiliares"
+                placeholder="Nomes da equipe de campo"
+              />
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button type="submit" class="btn-primary">Salvar registro</button>
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="limparDiario()"
+            >
+              Limpar formulário
+            </button>
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="exportarDiarioCSV()"
+            >
+              Exportar CSV
+            </button>
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="showSection('home')"
+            >
+              Voltar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Registros salvos</div>
+        <div id="lista-diario" class="small-muted">
+          Nenhum registro salvo ainda.
+        </div>
+      </div>
+    </section>
+
+    <!-- Sondagem / Instalação de Poço -->
+    <section id="sondagem" class="hidden">
+      <div class="card">
+        <h2>Sondagem / Instalação de Poço</h2>
+        <p class="small-muted">
+          Baseado no formulário "FORMULÁRIO DE SONDAGEM / INSTALAÇÃO DE POÇO".
+        </p>
+        <form id="form-sondagem" onsubmit="salvarSondagem(event)">
+          <div class="row">
+            <div>
+              <label for="sond-projeto">Nº do Projeto</label>
+              <input type="text" id="sond-projeto" required />
+            </div>
+            <div>
+              <label for="sond-empresa">Empresa de Sondagem</label>
+              <input type="text" id="sond-empresa" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="sond-id">ID da Sondagem/Poço</label>
+              <input type="text" id="sond-id" required />
+            </div>
+            <div>
+              <label for="sond-data">Data</label>
+              <input type="date" id="sond-data" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="sond-prof-final">Profundidade final (m)</label>
+              <input type="number" step="0.01" id="sond-prof-final" />
+            </div>
+            <div>
+              <label for="sond-nivel-agua">Nível d'água (m)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="sond-nivel-agua"
+                placeholder="Ex.: 3,20"
+              />
+            </div>
+          </div>
+
+          <label for="sond-obs">
+            Observações gerais / Instalação, diâmetros, filtros, etc.
+          </label>
+          <textarea
+            id="sond-obs"
+            placeholder="Informações gerais da sondagem e instalação do poço."
+          ></textarea>
+
+          <div class="section-title">Descrição estratigráfica (camadas)</div>
+          <p class="small-muted" style="margin-top: 0;">
+            Adicione camadas com profundidades, cor e descrição equivalente à tabela
+            de campo (Prof., Cor, Gênese, Material, Textura, Características, etc.).
+          </p>
+
+          <div id="container-camadas"></div>
+
+          <button
+            type="button"
+            class="btn-secondary btn-small"
+            onclick="adicionarCamada()"
+          >
+            + Adicionar camada
+          </button>
+
+          <div class="section-title" style="margin-top: 14px;">Medições de VOC</div>
+          <p class="small-muted" style="margin-top: 0;">
+            Registre as medições de VOC realizadas (tipicamente a cada 0,20 m).
+          </p>
+
+          <div id="container-voc"></div>
+
+          <button
+            type="button"
+            class="btn-secondary btn-small"
+            onclick="adicionarVOC()"
+          >
+            + Adicionar medição VOC
+          </button>
+
+          <div class="btn-group" style="margin-top: 10px;">
+            <button type="submit" class="btn-primary">Salvar registro</button>
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="limparSondagem()"
+            >
+              Limpar formulário
+            </button>
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="exportarSondagemCSV()"
+            >
+              Exportar CSV
+            </button>
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="showSection('home')"
+            >
+              Voltar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Registros salvos</div>
+        <div id="lista-sondagem" class="small-muted">
+          Nenhum registro salvo ainda.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ===================== CONSTANTES (LISTAS DE OPÇÕES) =====================
+
+    const OPCOES_GENESE = [
+      "Pavimento","Aterro","Alúvio","Colúvio","Elúvio","Talus","Concreções",
+      "Crosta laterítica","Limonita","SAR: Solo de alteração de rocha",
+      "Rocha alterada","Rocha fresca","Resíduo industrial","Resíduo doméstico",
+      "Resíduo hospitalar","Resíduo de construção civil","Resíduos diversos",
+      "Resíduo sanitário"
+    ];
+
+    const OPCOES_MATERIAL = [
+      "Asfalto","Bloquete","Cimento","Concreto","Paralelepípedo",
+      "Argila","Argila arenosa","Argila areno siltosa","Argila orgânica",
+      "Argila silto arenosa","Argila siltosa","Silte","Silte arenoso",
+      "Silte areno argiloso","Silte argilo arenoso","Silte argiloso",
+      "Areia","Areia argilosa","Areia argilo siltosa","Areia silto argilosa",
+      "Areia siltosa","Cascalho","Cascalho argiloso","Cascalho arenoso",
+      "Cascalho siltoso","Conglomerado (clasto)","Conglomerado (matriz)",
+      "Argilito","Siltito","Arenito","Basalto","Diabásio","Gabro",
+      "Granito","Gnaisse","Xisto","Turfa","Areia de fundição",
+      "Borra oleosa","Brita","Cerâmica","Entulho"
+    ];
+
+    const OPCOES_GRANULOMETRIA = [
+      "Muito fina","Fina","Fina média","Média","Média grossa",
+      "Grossa","Muito grossa","Cascalho","Seixo","Matacão",
+      "Afanítica","Fanerítica","Porfirítica"
+    ];
+
+    const OPCOES_CARACTERISTICAS = [
+      "Angular","Arredondado","Bem arredondado","Muito angular",
+      "Sub arredondado","Sub angular","Bandada","Xistosa",
+      "Foliada","Compacta"
+    ];
+
+    const OPCOES_GRAU_SELECAO = [
+      "Bem selecionados","Mal selecionados",
+      "Muito bem selecionados","Muito mal selecionados"
+    ];
+
+    const OPCOES_OBS_EXTRAS = [
+      "Friável","Plástico","Pastilhado","Impenetrável",
+      "Sem recuperação","Pastoso","Líquido","Sólido","Inflamável"
+    ];
+
+    const OPCOES_COR = [
+      "Branca","Cinza clara","Cinza escura","Amarela","Amarelo-avermelhada",
+      "Vermelha","Avermelhada","Marrom clara","Marrom","Marrom escura",
+      "Preta","Esverdeada","Azulada"
+    ];
+
+    // ===================== FUNÇÕES DE APOIO A SELECT + OUTRO =====================
+
+    function preencherSelectComOutro(selectElem, opcoes) {
+      selectElem.innerHTML = "";
+      const optDefault = document.createElement("option");
+      optDefault.value = "";
+      optDefault.textContent = "Selecione";
+      selectElem.appendChild(optDefault);
+
+      opcoes.forEach((val) => {
+        const o = document.createElement("option");
+        o.value = val;
+        o.textContent = val;
+        selectElem.appendChild(o);
+      });
+
+      const optOutro = document.createElement("option");
+      optOutro.value = "__outro__";
+      optOutro.textContent = "Outro (digitar)";
+      selectElem.appendChild(optOutro);
+    }
+
+    function configurarSelectOutro(selectElem, outroInput) {
+      selectElem.addEventListener("change", () => {
+        if (selectElem.value === "__outro__") {
+          outroInput.classList.remove("hidden");
+          outroInput.focus();
+        } else {
+          outroInput.classList.add("hidden");
+          outroInput.value = "";
+        }
+      });
+    }
+
+    function valorSelectOuOutro(selectElem, outroInput) {
+      if (selectElem.value === "__outro__") {
+        return outroInput.value.trim();
+      }
+      return selectElem.value || "";
+    }
+
+    // ===================== ARMAZENAMENTO LOCAL =====================
+
+    const STORAGE_DIARIO   = "form_diario_registros_v1";
+    const STORAGE_SONDAGEM = "form_sondagem_registros_v2";
+
+    function showSection(id) {
+      document.getElementById("home").classList.add("hidden");
+      document.getElementById("diario").classList.add("hidden");
+      document.getElementById("sondagem").classList.add("hidden");
+      document.getElementById(id).classList.remove("hidden");
+      if (id === "diario") {
+        renderListaDiario();
+      } else if (id === "sondagem") {
+        renderListaSondagem();
+      }
+    }
+
+    function carregarRegistros(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return [];
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error("Erro ao carregar registros", key, e);
+        return [];
+      }
+    }
+
+    function salvarRegistros(key, lista) {
+      localStorage.setItem(key, JSON.stringify(lista));
+    }
+
+    // ===================== DIÁRIO DE ATIVIDADES =====================
+
+    function salvarDiario(event) {
+      event.preventDefault();
+      const reg = {
+        id: Date.now(),
+        projeto: document.getElementById("diario-projeto").value.trim(),
+        cliente: document.getElementById("diario-cliente").value.trim(),
+        local: document.getElementById("diario-local").value.trim(),
+        data: document.getElementById("diario-data").value,
+        horario: document.getElementById("diario-horario").value.trim(),
+        clima: document.getElementById("diario-clima").value,
+        atividades: document.getElementById("diario-atividades").value.trim(),
+        observacoes: document
+          .getElementById("diario-observacoes")
+          .value.trim(),
+        responsavel: document.getElementById("diario-responsavel").value.trim(),
+        auxiliares: document.getElementById("diario-auxiliares").value.trim(),
+      };
+
+      const lista = carregarRegistros(STORAGE_DIARIO);
+      lista.push(reg);
+      salvarRegistros(STORAGE_DIARIO, lista);
+      limparDiario(false);
+      renderListaDiario();
+      alert("Registro de diário salvo com sucesso.");
+    }
+
+    function limparDiario(alsoFocus = true) {
+      document.getElementById("form-diario").reset();
+      if (alsoFocus) {
+        document.getElementById("diario-projeto").focus();
+      }
+    }
+
+    function excluirDiario(id) {
+      if (!confirm("Deseja realmente excluir este registro do diário?")) return;
+      let lista = carregarRegistros(STORAGE_DIARIO);
+      lista = lista.filter((reg) => reg.id !== id);
+      salvarRegistros(STORAGE_DIARIO, lista);
+      renderListaDiario();
+    }
+
+    function renderListaDiario() {
+      const lista = carregarRegistros(STORAGE_DIARIO);
+      const container = document.getElementById("lista-diario");
+      if (!lista.length) {
+        container.textContent = "Nenhum registro salvo ainda.";
+        return;
+      }
+      container.innerHTML = "";
+      lista
+        .slice()
+        .reverse()
+        .forEach((reg) => {
+          const div = document.createElement("div");
+          div.className = "record";
+          const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "";
+          div.innerHTML = `
+            <div class="record-title">
+              Projeto ${reg.projeto || "(sem nº)"} – ${reg.local || "Local não informado"}
+            </div>
+            <div class="small-muted">
+              Data: ${dataFmt || "sem data"} · Clima: ${reg.clima || "-"} · Horário: ${
+                reg.horario || "-"
+              }
+            </div>
+            <div style="margin-top:4px; font-size:13px;">
+              <span class="tag">Cliente: ${reg.cliente || "-"}</span>
+              <span class="tag">Resp.: ${reg.responsavel || "-"}</span>
+              ${
+                reg.auxiliares
+                  ? `<span class="tag">Equipe: ${reg.auxiliares}</span>`
+                  : ""
+              }
+            </div>
+            ${
+              reg.atividades
+                ? `<div style="margin-top:6px;"><strong>Atividades:</strong> ${reg.atividades}</div>`
+                : ""
+            }
+            ${
+              reg.observacoes
+                ? `<div style="margin-top:4px;"><strong>Obs.:</strong> ${reg.observacoes}</div>`
+                : ""
+            }
+            <div style="margin-top:6px; text-align:right;">
+              <button type="button" class="btn-danger btn-small" onclick="excluirDiario(${reg.id})">
+                Excluir
+              </button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function exportarDiarioCSV() {
+      const lista = carregarRegistros(STORAGE_DIARIO);
+      if (!lista.length) {
+        alert("Não há registros para exportar.");
+        return;
+      }
+      const header = [
+        "projeto",
+        "cliente",
+        "local",
+        "data",
+        "horario",
+        "clima",
+        "atividades",
+        "observacoes",
+        "responsavel",
+        "auxiliares",
+      ];
+      const linhas = [header.join(";")];
+      lista.forEach((reg) => {
+        const linha = header
+          .map((campo) => {
+            let v = reg[campo] || "";
+            v = String(v).replace(/"/g, '""');
+            if (v.indexOf(";") >= 0 || v.indexOf("\n") >= 0) {
+              v = `"${v}"`;
+            }
+            return v;
+          })
+          .join(";");
+        linhas.push(linha);
+      });
+      const blob = new Blob([linhas.join("\n")], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const hoje = new Date();
+      const nome =
+        "diario_atividades_" +
+        hoje.getFullYear() +
+        String(hoje.getMonth() + 1).padStart(2, "0") +
+        String(hoje.getDate()).padStart(2, "0") +
+        ".csv";
+      a.download = nome;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ===================== SONDAGEM / POÇO =====================
+
+    function camadaTemplate(index) {
+      const idx = index;
+      return `
+        <div class="layer-card" data-layer-index="${idx}">
+          <div class="row">
+            <div>
+              <label>Prof. de (m)</label>
+              <input type="number" step="0.01" class="cam-prof-de" />
+            </div>
+            <div>
+              <label>Prof. até (m)</label>
+              <input type="number" step="0.01" class="cam-prof-ate" />
+            </div>
+          </div>
+
+          <label>Cor</label>
+          <div class="row">
+            <div>
+              <select class="cam-cor-select"></select>
+            </div>
+            <div>
+              <input
+                type="text"
+                class="cam-cor-outro hidden"
+                placeholder="Outro (digite a cor)"
+              />
+            </div>
+          </div>
+
+          <label>Descrição (texto livre)</label>
+          <textarea class="cam-descricao" placeholder="Descrição das características observadas."></textarea>
+
+          <div class="row">
+            <div>
+              <label>Gênese / Tipo Rochoso</label>
+              <select class="cam-genese-select"></select>
+              <input
+                type="text"
+                class="cam-genese-outro hidden"
+                placeholder="Outro (digite a gênese/tipo)"
+              />
+            </div>
+            <div>
+              <label>Material</label>
+              <select class="cam-material-select"></select>
+              <input
+                type="text"
+                class="cam-material-outro hidden"
+                placeholder="Outro (digite o material)"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Granulometria / Textura</label>
+              <select class="cam-textura-select"></select>
+              <input
+                type="text"
+                class="cam-textura-outro hidden"
+                placeholder="Outro (digite a textura)"
+              />
+            </div>
+            <div>
+              <label>Características (grau de arredondamento / estrutura)</label>
+              <select class="cam-caracteristicas-select"></select>
+              <input
+                type="text"
+                class="cam-caracteristicas-outro hidden"
+                placeholder="Outro (digite as características)"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Grau de seleção / Fraturas</label>
+              <select class="cam-grauselecao-select"></select>
+              <input
+                type="text"
+                class="cam-grauselecao-outro hidden"
+                placeholder="Outro (digite o grau de seleção/fraturas)"
+              />
+            </div>
+            <div>
+              <label>Outras observações</label>
+              <select class="cam-obsextra-select"></select>
+              <input
+                type="text"
+                class="cam-obsextra-outro hidden"
+                placeholder="Outro (digite observações)"
+              />
+            </div>
+          </div>
+
+          <div class="inline-checkbox">
+            <input type="checkbox" class="cam-amostra" id="cam-amostra-${idx}">
+            <label for="cam-amostra-${idx}">Houve amostragem nesta camada</label>
+          </div>
+
+          <input
+            type="text"
+            class="cam-intervalo hidden"
+            placeholder="Intervalo amostrado (m) – ex.: 1,50–2,00"
+          />
+
+          <div style="text-align:right; margin-top:6px;">
+            <button type="button" class="btn-danger btn-small" onclick="removerCamada(this)">
+              Remover camada
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function initCamadaCard(card) {
+      const corSelect = card.querySelector(".cam-cor-select");
+      const corOutro  = card.querySelector(".cam-cor-outro");
+      preencherSelectComOutro(corSelect, OPCOES_COR);
+      configurarSelectOutro(corSelect, corOutro);
+
+      const genSelect = card.querySelector(".cam-genese-select");
+      const genOutro  = card.querySelector(".cam-genese-outro");
+      preencherSelectComOutro(genSelect, OPCOES_GENESE);
+      configurarSelectOutro(genSelect, genOutro);
+
+      const matSelect = card.querySelector(".cam-material-select");
+      const matOutro  = card.querySelector(".cam-material-outro");
+      preencherSelectComOutro(matSelect, OPCOES_MATERIAL);
+      configurarSelectOutro(matSelect, matOutro);
+
+      const texSelect = card.querySelector(".cam-textura-select");
+      const texOutro  = card.querySelector(".cam-textura-outro");
+      preencherSelectComOutro(texSelect, OPCOES_GRANULOMETRIA);
+      configurarSelectOutro(texSelect, texOutro);
+
+      const carSelect = card.querySelector(".cam-caracteristicas-select");
+      const carOutro  = card.querySelector(".cam-caracteristicas-outro");
+      preencherSelectComOutro(carSelect, OPCOES_CARACTERISTICAS);
+      configurarSelectOutro(carSelect, carOutro);
+
+      const grauSelect = card.querySelector(".cam-grauselecao-select");
+      const grauOutro  = card.querySelector(".cam-grauselecao-outro");
+      preencherSelectComOutro(grauSelect, OPCOES_GRAU_SELECAO);
+      configurarSelectOutro(grauSelect, grauOutro);
+
+      const obsSelect = card.querySelector(".cam-obsextra-select");
+      const obsOutro  = card.querySelector(".cam-obsextra-outro");
+      preencherSelectComOutro(obsSelect, OPCOES_OBS_EXTRAS);
+      configurarSelectOutro(obsSelect, obsOutro);
+
+      const chkAmostra   = card.querySelector(".cam-amostra");
+      const campoIntervalo = card.querySelector(".cam-intervalo");
+      chkAmostra.addEventListener("change", () => {
+        if (chkAmostra.checked) {
+          campoIntervalo.classList.remove("hidden");
+          campoIntervalo.focus();
+        } else {
+          campoIntervalo.classList.add("hidden");
+          campoIntervalo.value = "";
+        }
+      });
+    }
+
+    function adicionarCamada() {
+      const container = document.getElementById("container-camadas");
+      const idx = container.children.length + 1;
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = camadaTemplate(idx);
+      const card = wrapper.firstElementChild;
+      container.appendChild(card);
+      initCamadaCard(card);
+    }
+
+    function removerCamada(btn) {
+      const card = btn.closest(".layer-card");
+      if (card) card.remove();
+    }
+
+    function vocTemplate(index) {
+      const idx = index;
+      return `
+        <div class="voc-card" data-voc-index="${idx}">
+          <div class="row">
+            <div>
+              <label>Profundidade (m)</label>
+              <input type="number" step="0.01" class="voc-prof" placeholder="Ex.: 1,20" />
+            </div>
+            <div>
+              <label>VOC (ppm)</label>
+              <input type="number" step="0.01" class="voc-valor" placeholder="Ex.: 0,3" />
+            </div>
+          </div>
+          <div style="text-align:right; margin-top:4px;">
+            <button type="button" class="btn-danger btn-small" onclick="removerVOC(this)">
+              Remover medição
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function adicionarVOC() {
+      const container = document.getElementById("container-voc");
+      const idx = container.children.length + 1;
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = vocTemplate(idx);
+      container.appendChild(wrapper.firstElementChild);
+    }
+
+    function removerVOC(btn) {
+      const card = btn.closest(".voc-card");
+      if (card) card.remove();
+    }
+
+    function excluirSondagem(id) {
+      if (!confirm("Deseja realmente excluir este registro de sondagem/poço?")) return;
+      let lista = carregarRegistros(STORAGE_SONDAGEM);
+      lista = lista.filter((reg) => reg.id !== id);
+      salvarRegistros(STORAGE_SONDAGEM, lista);
+      renderListaSondagem();
+    }
+
+    function salvarSondagem(event) {
+      event.preventDefault();
+      const projeto   = document.getElementById("sond-projeto").value.trim();
+      const empresa   = document.getElementById("sond-empresa").value.trim();
+      const idSond    = document.getElementById("sond-id").value.trim();
+      const data      = document.getElementById("sond-data").value;
+      const profFinal = document.getElementById("sond-prof-final").value.trim();
+      const nivelAgua = document.getElementById("sond-nivel-agua").value.trim();
+      const obs       = document.getElementById("sond-obs").value.trim();
+
+      const camadas = [];
+      const contCam = document.getElementById("container-camadas");
+      const cards   = contCam.querySelectorAll(".layer-card");
+      cards.forEach((card) => {
+        const camada = {
+          profDe: card.querySelector(".cam-prof-de").value.trim() || null,
+          profAte: card.querySelector(".cam-prof-ate").value.trim() || null,
+          cor: valorSelectOuOutro(
+            card.querySelector(".cam-cor-select"),
+            card.querySelector(".cam-cor-outro")
+          ),
+          descricao: card.querySelector(".cam-descricao").value.trim() || "",
+          genese: valorSelectOuOutro(
+            card.querySelector(".cam-genese-select"),
+            card.querySelector(".cam-genese-outro")
+          ),
+          material: valorSelectOuOutro(
+            card.querySelector(".cam-material-select"),
+            card.querySelector(".cam-material-outro")
+          ),
+          textura: valorSelectOuOutro(
+            card.querySelector(".cam-textura-select"),
+            card.querySelector(".cam-textura-outro")
+          ),
+          caracteristicas: valorSelectOuOutro(
+            card.querySelector(".cam-caracteristicas-select"),
+            card.querySelector(".cam-caracteristicas-outro")
+          ),
+          grauSelecao: valorSelectOuOutro(
+            card.querySelector(".cam-grauselecao-select"),
+            card.querySelector(".cam-grauselecao-outro")
+          ),
+          obsExtras: valorSelectOuOutro(
+            card.querySelector(".cam-obsextra-select"),
+            card.querySelector(".cam-obsextra-outro")
+          ),
+          houveAmostra: card.querySelector(".cam-amostra").checked,
+          intervaloAmostra:
+            card.querySelector(".cam-intervalo").value.trim() || "",
+        };
+        const temAlgo =
+          camada.profDe ||
+          camada.profAte ||
+          camada.cor ||
+          camada.descricao ||
+          camada.genese ||
+          camada.material ||
+          camada.textura ||
+          camada.caracteristicas ||
+          camada.grauSelecao ||
+          camada.obsExtras ||
+          camada.houveAmostra ||
+          camada.intervaloAmostra;
+        if (temAlgo) camadas.push(camada);
+      });
+
+      const vocs = [];
+      const contVoc  = document.getElementById("container-voc");
+      const vocCards = contVoc.querySelectorAll(".voc-card");
+      vocCards.forEach((card) => {
+        const prof  = card.querySelector(".voc-prof").value.trim();
+        const valor = card.querySelector(".voc-valor").value.trim();
+        if (prof || valor) {
+          vocs.push({ profundidade: prof, valor });
+        }
+      });
+
+      const reg = {
+        id: Date.now(),
+        projeto,
+        empresa,
+        idSond,
+        data,
+        profFinal,
+        nivelAgua,
+        obs,
+        camadas,
+        vocs,
+      };
+
+      const lista = carregarRegistros(STORAGE_SONDAGEM);
+      lista.push(reg);
+      salvarRegistros(STORAGE_SONDAGEM, lista);
+      limparSondagem(false);
+      renderListaSondagem();
+      alert("Registro de sondagem salvo com sucesso.");
+    }
+
+    function limparSondagem(alsoFocus = true) {
+      document.getElementById("form-sondagem").reset();
+      document.getElementById("container-camadas").innerHTML = "";
+      document.getElementById("container-voc").innerHTML = "";
+      adicionarCamada();
+      adicionarVOC();
+      if (alsoFocus) {
+        document.getElementById("sond-projeto").focus();
+      }
+    }
+
+    function renderListaSondagem() {
+      const lista = carregarRegistros(STORAGE_SONDAGEM);
+      const container = document.getElementById("lista-sondagem");
+      if (!lista.length) {
+        container.textContent = "Nenhum registro salvo ainda.";
+        return;
+      }
+      container.innerHTML = "";
+      lista
+        .slice()
+        .reverse()
+        .forEach((reg) => {
+          const div = document.createElement("div");
+          div.className = "record";
+          const dataFmt   = reg.data ? reg.data.split("-").reverse().join("/") : "";
+          const qtdCamadas = (reg.camadas || []).length;
+          const qtdVOCs    = (reg.vocs || []).length;
+          div.innerHTML = `
+            <div class="record-title">
+              Projeto ${reg.projeto || "(sem nº)"} – ${
+                reg.idSond || "ID não informado"
+              }
+            </div>
+            <div class="small-muted">
+              Empresa: ${reg.empresa || "-"} · Data: ${
+            dataFmt || "sem data"
+          } · Prof. final: ${reg.profFinal || "-"} m · Nível d'água: ${
+            reg.nivelAgua || "-"
+          } m
+            </div>
+            <div style="margin-top:4px; font-size:13px;">
+              <span class="tag">${qtdCamadas} camadas descritas</span>
+              <span class="tag">${qtdVOCs} medições VOC</span>
+            </div>
+            ${
+              reg.obs
+                ? `<div style="margin-top:6px;"><strong>Obs. gerais:</strong> ${reg.obs}</div>`
+                : ""
+            }
+            <div style="margin-top:6px; text-align:right;">
+              <button type="button" class="btn-danger btn-small" onclick="excluirSondagem(${reg.id})">
+                Excluir
+              </button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function exportarSondagemCSV() {
+      const lista = carregarRegistros(STORAGE_SONDAGEM);
+      if (!lista.length) {
+        alert("Não há registros para exportar.");
+        return;
+      }
+      const header = [
+        "projeto","empresa","idSond","data",
+        "profFinal","nivelAgua","obs","camadas","vocs"
+      ];
+      const linhas = [header.join(";")];
+
+      lista.forEach((reg) => {
+        const camadasStr = (reg.camadas || [])
+          .map((c, i) => {
+            const profStr =
+              (c.profDe ? c.profDe : "?") +
+              "-" +
+              (c.profAte ? c.profAte : "?") +
+              "m";
+            const partes = [];
+            if (c.cor) partes.push("Cor: " + c.cor);
+            if (c.descricao) partes.push("Desc: " + c.descricao);
+            if (c.genese) partes.push("Gênese: " + c.genese);
+            if (c.material) partes.push("Material: " + c.material);
+            if (c.textura) partes.push("Textura: " + c.textura);
+            if (c.caracteristicas) partes.push("Caract.: " + c.caracteristicas);
+            if (c.grauSelecao) partes.push("Sel./Frat.: " + c.grauSelecao);
+            if (c.obsExtras) partes.push("Obs. ext.: " + c.obsExtras);
+            if (c.houveAmostra)
+              partes.push(
+                "Amostra: " + (c.intervaloAmostra || "intervalo não informado")
+              );
+            return (
+              "Camada " +
+              (i + 1) +
+              " [" +
+              profStr +
+              "] - " +
+              partes.join(" | ")
+            );
+          })
+          .join(" || ");
+
+        const vocStr = (reg.vocs || [])
+          .map(
+            (v, i) =>
+              "VOC " +
+              (i + 1) +
+              " [" +
+              (v.profundidade || "?") +
+              " m] = " +
+              (v.valor || "?") +
+              " ppm"
+          )
+          .join(" | ");
+
+        const obj = {
+          projeto: reg.projeto || "",
+          empresa: reg.empresa || "",
+          idSond: reg.idSond || "",
+          data: reg.data || "",
+          profFinal: reg.profFinal || "",
+          nivelAgua: reg.nivelAgua || "",
+          obs: reg.obs || "",
+          camadas: camadasStr,
+          vocs: vocStr,
+        };
+
+        const linha = header
+          .map((campo) => {
+            let v = obj[campo] || "";
+            v = String(v).replace(/"/g, '""');
+            if (v.indexOf(";") >= 0 || v.indexOf("\n") >= 0) {
+              v = `"${v}"`;
+            }
+            return v;
+          })
+          .join(";");
+        linhas.push(linha);
+      });
+
+      const blob = new Blob([linhas.join("\n")], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const hoje = new Date();
+      const nome =
+        "sondagem_pocos_" +
+        hoje.getFullYear() +
+        String(hoje.getMonth() + 1).padStart(2, "0") +
+        String(hoje.getDate()).padStart(2, "0") +
+        ".csv";
+      a.download = nome;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ===================== INICIALIZAÇÃO =====================
+
+    (function init() {
+      renderListaDiario();
+      renderListaSondagem();
+      adicionarCamada();
+      adicionarVOC();
+    })();
+  </script>
+</body>
+</html>
