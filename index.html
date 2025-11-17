@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <title>Formulários de Campo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Ícones (você precisa ter um PNG chamado icon-192.png na mesma pasta) -->
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+
   <style>
     * {
       box-sizing: border-box;
@@ -17,10 +23,28 @@
     header {
       background: #111827;
       color: #f9fafb;
-      padding: 12px 16px;
-      text-align: center;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header img {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+    header .title-block {
+      display: flex;
+      flex-direction: column;
+    }
+    header .title-block span:first-child {
       font-weight: 600;
-      font-size: 18px;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+    header .title-block span:last-child {
+      font-size: 11px;
+      color: #9ca3af;
     }
     main {
       padding: 12px;
@@ -176,7 +200,15 @@
   </style>
 </head>
 <body>
-  <header>Formulários de Campo</header>
+  <!-- Coloque o arquivo LogoColorido.svg na mesma pasta do index.html -->
+  <header>
+    <img src="LogoColorido.svg" alt="Logo da empresa" />
+    <div class="title-block">
+      <span>Formulários de Campo</span>
+      <span>Diário de Atividades · Sondagem / Poços</span>
+    </div>
+  </header>
+
   <main>
     <!-- Tela inicial -->
     <section id="home" class="card">
@@ -272,7 +304,9 @@
           </div>
 
           <div class="btn-group">
-            <button type="submit" class="btn-primary">Salvar registro</button>
+            <button id="btn-diario-salvar" type="submit" class="btn-primary">
+              Salvar registro
+            </button>
             <button
               type="button"
               class="btn-secondary"
@@ -293,6 +327,14 @@
               onclick="showSection('home')"
             >
               Voltar
+            </button>
+            <button
+              id="btn-diario-cancelar-edicao"
+              type="button"
+              class="btn-secondary hidden"
+              onclick="cancelarEdicaoDiario()"
+            >
+              Cancelar edição
             </button>
           </div>
         </form>
@@ -392,7 +434,9 @@
           </button>
 
           <div class="btn-group" style="margin-top: 10px;">
-            <button type="submit" class="btn-primary">Salvar registro</button>
+            <button id="btn-sondagem-salvar" type="submit" class="btn-primary">
+              Salvar registro
+            </button>
             <button
               type="button"
               class="btn-secondary"
@@ -413,6 +457,14 @@
               onclick="showSection('home')"
             >
               Voltar
+            </button>
+            <button
+              id="btn-sondagem-cancelar-edicao"
+              type="button"
+              class="btn-secondary hidden"
+              onclick="cancelarEdicaoSondagem()"
+            >
+              Cancelar edição
             </button>
           </div>
         </form>
@@ -479,7 +531,7 @@
       "Preta","Esverdeada","Azulada"
     ];
 
-    // ===================== FUNÇÕES DE APOIO A SELECT + OUTRO =====================
+    // ===================== SELECT + OUTRO =====================
 
     function preencherSelectComOutro(selectElem, opcoes) {
       selectElem.innerHTML = "";
@@ -520,10 +572,32 @@
       return selectElem.value || "";
     }
 
+    function setSelectAndOutro(selectElem, outroInput, valor) {
+      if (!valor) {
+        selectElem.value = "";
+        outroInput.classList.add("hidden");
+        outroInput.value = "";
+        return;
+      }
+      const values = Array.from(selectElem.options).map((o) => o.value);
+      if (values.includes(valor)) {
+        selectElem.value = valor;
+        outroInput.classList.add("hidden");
+        outroInput.value = "";
+      } else {
+        selectElem.value = "__outro__";
+        outroInput.classList.remove("hidden");
+        outroInput.value = valor;
+      }
+    }
+
     // ===================== ARMAZENAMENTO LOCAL =====================
 
     const STORAGE_DIARIO   = "form_diario_registros_v1";
     const STORAGE_SONDAGEM = "form_sondagem_registros_v2";
+
+    let editingDiarioId   = null;
+    let editingSondagemId = null;
 
     function showSection(id) {
       document.getElementById("home").classList.add("hidden");
@@ -535,6 +609,7 @@
       } else if (id === "sondagem") {
         renderListaSondagem();
       }
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function carregarRegistros(key) {
@@ -557,7 +632,7 @@
     function salvarDiario(event) {
       event.preventDefault();
       const reg = {
-        id: Date.now(),
+        id: editingDiarioId || Date.now(),
         projeto: document.getElementById("diario-projeto").value.trim(),
         cliente: document.getElementById("diario-cliente").value.trim(),
         local: document.getElementById("diario-local").value.trim(),
@@ -572,9 +647,16 @@
         auxiliares: document.getElementById("diario-auxiliares").value.trim(),
       };
 
-      const lista = carregarRegistros(STORAGE_DIARIO);
-      lista.push(reg);
+      let lista = carregarRegistros(STORAGE_DIARIO);
+      if (editingDiarioId) {
+        const idx = lista.findIndex((r) => r.id === editingDiarioId);
+        if (idx !== -1) lista[idx] = reg;
+      } else {
+        lista.push(reg);
+      }
       salvarRegistros(STORAGE_DIARIO, lista);
+      editingDiarioId = null;
+      atualizarEstadoEdicaoDiario();
       limparDiario(false);
       renderListaDiario();
       alert("Registro de diário salvo com sucesso.");
@@ -592,7 +674,52 @@
       let lista = carregarRegistros(STORAGE_DIARIO);
       lista = lista.filter((reg) => reg.id !== id);
       salvarRegistros(STORAGE_DIARIO, lista);
+      if (editingDiarioId === id) {
+        editingDiarioId = null;
+        atualizarEstadoEdicaoDiario();
+        limparDiario(false);
+      }
       renderListaDiario();
+    }
+
+    function editarDiario(id) {
+      const lista = carregarRegistros(STORAGE_DIARIO);
+      const reg = lista.find((r) => r.id === id);
+      if (!reg) return;
+
+      editingDiarioId = id;
+      document.getElementById("diario-projeto").value = reg.projeto || "";
+      document.getElementById("diario-cliente").value = reg.cliente || "";
+      document.getElementById("diario-local").value = reg.local || "";
+      document.getElementById("diario-data").value = reg.data || "";
+      document.getElementById("diario-horario").value = reg.horario || "";
+      document.getElementById("diario-clima").value = reg.clima || "";
+      document.getElementById("diario-atividades").value = reg.atividades || "";
+      document.getElementById("diario-observacoes").value = reg.observacoes || "";
+      document.getElementById("diario-responsavel").value = reg.responsavel || "";
+      document.getElementById("diario-auxiliares").value = reg.auxiliares || "";
+
+      atualizarEstadoEdicaoDiario();
+      showSection("diario");
+      document.getElementById("diario-projeto").focus();
+    }
+
+    function atualizarEstadoEdicaoDiario() {
+      const btnSalvar = document.getElementById("btn-diario-salvar");
+      const btnCancelar = document.getElementById("btn-diario-cancelar-edicao");
+      if (editingDiarioId) {
+        btnSalvar.textContent = "Atualizar registro";
+        btnCancelar.classList.remove("hidden");
+      } else {
+        btnSalvar.textContent = "Salvar registro";
+        btnCancelar.classList.add("hidden");
+      }
+    }
+
+    function cancelarEdicaoDiario() {
+      editingDiarioId = null;
+      atualizarEstadoEdicaoDiario();
+      limparDiario();
     }
 
     function renderListaDiario() {
@@ -639,6 +766,9 @@
                 : ""
             }
             <div style="margin-top:6px; text-align:right;">
+              <button type="button" class="btn-secondary btn-small" onclick="editarDiario(${reg.id})">
+                Editar
+              </button>
               <button type="button" class="btn-danger btn-small" onclick="excluirDiario(${reg.id})">
                 Excluir
               </button>
@@ -853,7 +983,7 @@
       preencherSelectComOutro(obsSelect, OPCOES_OBS_EXTRAS);
       configurarSelectOutro(obsSelect, obsOutro);
 
-      const chkAmostra   = card.querySelector(".cam-amostra");
+      const chkAmostra     = card.querySelector(".cam-amostra");
       const campoIntervalo = card.querySelector(".cam-intervalo");
       chkAmostra.addEventListener("change", () => {
         if (chkAmostra.checked) {
@@ -922,6 +1052,11 @@
       let lista = carregarRegistros(STORAGE_SONDAGEM);
       lista = lista.filter((reg) => reg.id !== id);
       salvarRegistros(STORAGE_SONDAGEM, lista);
+      if (editingSondagemId === id) {
+        editingSondagemId = null;
+        atualizarEstadoEdicaoSondagem();
+        limparSondagem(false);
+      }
       renderListaSondagem();
     }
 
@@ -1003,7 +1138,7 @@
       });
 
       const reg = {
-        id: Date.now(),
+        id: editingSondagemId || Date.now(),
         projeto,
         empresa,
         idSond,
@@ -1015,9 +1150,16 @@
         vocs,
       };
 
-      const lista = carregarRegistros(STORAGE_SONDAGEM);
-      lista.push(reg);
+      let lista = carregarRegistros(STORAGE_SONDAGEM);
+      if (editingSondagemId) {
+        const idx = lista.findIndex((r) => r.id === editingSondagemId);
+        if (idx !== -1) lista[idx] = reg;
+      } else {
+        lista.push(reg);
+      }
       salvarRegistros(STORAGE_SONDAGEM, lista);
+      editingSondagemId = null;
+      atualizarEstadoEdicaoSondagem();
       limparSondagem(false);
       renderListaSondagem();
       alert("Registro de sondagem salvo com sucesso.");
@@ -1032,6 +1174,120 @@
       if (alsoFocus) {
         document.getElementById("sond-projeto").focus();
       }
+    }
+
+    function editarSondagem(id) {
+      const lista = carregarRegistros(STORAGE_SONDAGEM);
+      const reg = lista.find((r) => r.id === id);
+      if (!reg) return;
+
+      editingSondagemId = id;
+      document.getElementById("sond-projeto").value = reg.projeto || "";
+      document.getElementById("sond-empresa").value = reg.empresa || "";
+      document.getElementById("sond-id").value = reg.idSond || "";
+      document.getElementById("sond-data").value = reg.data || "";
+      document.getElementById("sond-prof-final").value = reg.profFinal || "";
+      document.getElementById("sond-nivel-agua").value = reg.nivelAgua || "";
+      document.getElementById("sond-obs").value = reg.obs || "";
+
+      // Camadas
+      document.getElementById("container-camadas").innerHTML = "";
+      (reg.camadas || []).forEach((c, index) => {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = camadaTemplate(index + 1);
+        const card = wrapper.firstElementChild;
+        document.getElementById("container-camadas").appendChild(card);
+        initCamadaCard(card);
+
+        card.querySelector(".cam-prof-de").value = c.profDe || "";
+        card.querySelector(".cam-prof-ate").value = c.profAte || "";
+        setSelectAndOutro(
+          card.querySelector(".cam-cor-select"),
+          card.querySelector(".cam-cor-outro"),
+          c.cor || ""
+        );
+        card.querySelector(".cam-descricao").value = c.descricao || "";
+
+        setSelectAndOutro(
+          card.querySelector(".cam-genese-select"),
+          card.querySelector(".cam-genese-outro"),
+          c.genese || ""
+        );
+        setSelectAndOutro(
+          card.querySelector(".cam-material-select"),
+          card.querySelector(".cam-material-outro"),
+          c.material || ""
+        );
+        setSelectAndOutro(
+          card.querySelector(".cam-textura-select"),
+          card.querySelector(".cam-textura-outro"),
+          c.textura || ""
+        );
+        setSelectAndOutro(
+          card.querySelector(".cam-caracteristicas-select"),
+          card.querySelector(".cam-caracteristicas-outro"),
+          c.caracteristicas || ""
+        );
+        setSelectAndOutro(
+          card.querySelector(".cam-grauselecao-select"),
+          card.querySelector(".cam-grauselecao-outro"),
+          c.grauSelecao || ""
+        );
+        setSelectAndOutro(
+          card.querySelector(".cam-obsextra-select"),
+          card.querySelector(".cam-obsextra-outro"),
+          c.obsExtras || ""
+        );
+
+        const chkAmostra   = card.querySelector(".cam-amostra");
+        const campoIntervalo = card.querySelector(".cam-intervalo");
+        chkAmostra.checked = !!c.houveAmostra;
+        campoIntervalo.value = c.intervaloAmostra || "";
+        if (chkAmostra.checked) {
+          campoIntervalo.classList.remove("hidden");
+        } else {
+          campoIntervalo.classList.add("hidden");
+        }
+      });
+      if (!reg.camadas || !reg.camadas.length) {
+        adicionarCamada();
+      }
+
+      // VOCs
+      document.getElementById("container-voc").innerHTML = "";
+      (reg.vocs || []).forEach((v, index) => {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = vocTemplate(index + 1);
+        const card = wrapper.firstElementChild;
+        document.getElementById("container-voc").appendChild(card);
+        card.querySelector(".voc-prof").value = v.profundidade || "";
+        card.querySelector(".voc-valor").value = v.valor || "";
+      });
+      if (!reg.vocs || !reg.vocs.length) {
+        adicionarVOC();
+      }
+
+      atualizarEstadoEdicaoSondagem();
+      showSection("sondagem");
+      document.getElementById("sond-projeto").focus();
+    }
+
+    function atualizarEstadoEdicaoSondagem() {
+      const btnSalvar   = document.getElementById("btn-sondagem-salvar");
+      const btnCancelar = document.getElementById("btn-sondagem-cancelar-edicao");
+      if (editingSondagemId) {
+        btnSalvar.textContent = "Atualizar registro";
+        btnCancelar.classList.remove("hidden");
+      } else {
+        btnSalvar.textContent = "Salvar registro";
+        btnCancelar.classList.add("hidden");
+      }
+    }
+
+    function cancelarEdicaoSondagem() {
+      editingSondagemId = null;
+      atualizarEstadoEdicaoSondagem();
+      limparSondagem();
     }
 
     function renderListaSondagem() {
@@ -1074,6 +1330,9 @@
                 : ""
             }
             <div style="margin-top:6px; text-align:right;">
+              <button type="button" class="btn-secondary btn-small" onclick="editarSondagem(${reg.id})">
+                Editar
+              </button>
               <button type="button" class="btn-danger btn-small" onclick="excluirSondagem(${reg.id})">
                 Excluir
               </button>
