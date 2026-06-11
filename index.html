@@ -882,7 +882,7 @@
             <button
               type="button"
               class="btn-secondary"
-              onclick="showSection('home')"
+              onclick="executarVoltar()"
             >
               Voltar
             </button>
@@ -910,7 +910,7 @@
           <button type="button" class="btn-secondary" onclick="editarProjeto()">
             Editar projeto
           </button>
-          <button type="button" class="btn-secondary" onclick="showSection('home')">
+          <button type="button" class="btn-secondary" onclick="executarVoltar()">
             Voltar
           </button>
           <button type="button" class="btn-danger" onclick="excluirProjeto()">
@@ -1063,7 +1063,7 @@
             <button
               type="button"
               class="btn-secondary"
-              onclick="showSection('home')"
+              onclick="executarVoltar()"
             >
               Voltar
             </button>
@@ -1303,7 +1303,7 @@
             <button
               type="button"
               class="btn-secondary"
-              onclick="showSection('home')"
+              onclick="executarVoltar()"
             >
               Voltar
             </button>
@@ -1631,11 +1631,142 @@
       } else if (id === "home") {
         renderListaProjetos();
       }
+      if (!navPop && id !== "home") {
+        try {
+          history.pushState({ app: 1 }, "");
+        } catch (e) {}
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function carregarRegistros(key) {
       return DB_CACHE[key] || [];
+    }
+
+    // ===================== NAVEGAÇÃO / VOLTAR POR GESTO =====================
+
+    let navPop = false; // evita empilhar histórico durante um movimento de "voltar"
+
+    function secaoVisivel() {
+      return ["projForm", "projDet", "diario", "sondagem", "home"].find(
+        (id) => !document.getElementById(id).classList.contains("hidden")
+      );
+    }
+
+    // Decide o destino lógico do "voltar" a partir de onde o usuário está
+    function voltarTela() {
+      // Wizard aberto: volta uma etapa dele
+      if (
+        !document.getElementById("wizard-overlay").classList.contains("hidden")
+      ) {
+        voltarStep();
+        return;
+      }
+      const visivel = secaoVisivel();
+      if (visivel === "diario") {
+        const pid =
+          Number(document.getElementById("diario-projetoid").value) || null;
+        if (pid && carregarRegistros(STORAGE_PROJETOS).some((p) => p.id === pid)) {
+          abrirProjeto(pid);
+        } else {
+          showSection("home");
+        }
+      } else if (visivel === "sondagem") {
+        const pid =
+          Number(document.getElementById("sond-projetoid").value) || null;
+        if (pid && carregarRegistros(STORAGE_PROJETOS).some((p) => p.id === pid)) {
+          abrirProjeto(pid);
+        } else {
+          showSection("home");
+        }
+      } else if (visivel === "projForm") {
+        if (editingProjetoId && projetoAtivoId) {
+          abrirProjeto(projetoAtivoId);
+        } else {
+          showSection("home");
+        }
+      } else if (visivel === "projDet") {
+        showSection("home");
+      }
+      // home: não há para onde voltar
+    }
+
+    function executarVoltar() {
+      navPop = true;
+      voltarTela();
+      navPop = false;
+    }
+
+    function configurarNavegacaoVoltar() {
+      // 1) Histórico: o gesto de borda do Safari/iPhone e o botão "voltar"
+      //    do Android disparam popstate; navegamos dentro do app.
+      try {
+        history.pushState({ app: 1 }, "");
+      } catch (e) {}
+      window.addEventListener("popstate", () => {
+        navPop = true;
+        if (
+          !document
+            .getElementById("wizard-overlay")
+            .classList.contains("hidden")
+        ) {
+          voltarStep();
+          try {
+            history.pushState({ app: 1 }, "");
+          } catch (e) {}
+        } else if (secaoVisivel() === "home") {
+          // Absorve o gesto na tela inicial para não sair do app sem querer
+          try {
+            history.pushState({ app: 1 }, "");
+          } catch (e) {}
+        } else {
+          voltarTela();
+        }
+        navPop = false;
+      });
+
+      // 2) Gesto próprio de arrasto da borda esquerda (modo app instalado,
+      //    onde o gesto do navegador não existe)
+      let swipeX = null;
+      let swipeY = null;
+      let swipeOk = false;
+      document.addEventListener(
+        "touchstart",
+        (e) => {
+          const t = e.touches[0];
+          if (t.clientX <= 28) {
+            swipeX = t.clientX;
+            swipeY = t.clientY;
+            swipeOk = true;
+          } else {
+            swipeOk = false;
+          }
+        },
+        { passive: true }
+      );
+      document.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!swipeOk) return;
+          if (Math.abs(e.touches[0].clientY - swipeY) > 60) swipeOk = false;
+        },
+        { passive: true }
+      );
+      document.addEventListener(
+        "touchend",
+        (e) => {
+          if (!swipeOk) return;
+          swipeOk = false;
+          const t = e.changedTouches[0];
+          if (
+            t.clientX - swipeX > 80 &&
+            Math.abs(t.clientY - swipeY) < 70
+          ) {
+            executarVoltar();
+          }
+        },
+        { passive: true }
+      );
     }
 
     function salvarRegistros(key, lista) {
@@ -1704,6 +1835,7 @@
     function limparDiario(alsoFocus = true) {
       document.getElementById("form-diario").reset();
       document.getElementById("diario-gps-info").textContent = "";
+      document.getElementById("diario-projetoid").value = "";
       preencherDatasHoje();
       if (alsoFocus) {
         document.getElementById("diario-projeto").focus();
@@ -2379,6 +2511,7 @@
       document.getElementById("sond-lat").value = "";
       document.getElementById("sond-lon").value = "";
       document.getElementById("sond-gps-info").textContent = "";
+      document.getElementById("sond-projetoid").value = "";
       document.getElementById("campos-poco").classList.add("hidden");
       limparFotos();
       preencherDatasHoje();
@@ -4351,6 +4484,7 @@
       preencherDatasHoje();
       montarChipsEventos();
       atualizarHoraEvento();
+      configurarNavegacaoVoltar();
       window.__pronto = true;
 
       // Service worker: deixa o app abrir 100% offline
