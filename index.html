@@ -1256,11 +1256,19 @@
             >
               ⧉ Repetir última camada
             </button>
+            <button
+              type="button"
+              class="btn-secondary btn-small"
+              onclick="copiarDeOutraSondagem()"
+            >
+              ⎘ Copiar de outra sondagem
+            </button>
           </div>
 
           <div class="section-title" style="margin-top: 14px;">Medições de VOC</div>
           <p class="small-muted" style="margin-top: 0;">
-            Registre as medições de VOC realizadas (tipicamente a cada 0,20 m).
+            Registre as medições de VOC. Use "Gerar série" para criar as
+            profundidades automaticamente no intervalo que você definir.
           </p>
 
           <div id="container-voc"></div>
@@ -1278,7 +1286,7 @@
               class="btn-secondary btn-small"
               onclick="gerarSerieVOC()"
             >
-              ⚡ Gerar série 0,20 m
+              ⚡ Gerar série
             </button>
           </div>
 
@@ -1617,6 +1625,7 @@
 
     let editingDiarioId   = null;
     let editingSondagemId = null;
+    let ultimoIntervaloVOC = "0,20";
 
     function showSection(id) {
       ["home", "diario", "sondagem", "projForm", "projDet"].forEach((s) => {
@@ -1940,6 +1949,9 @@
                 : ""
             }
             <div style="margin-top:6px; text-align:right;">
+              <button type="button" class="btn-primary btn-small" onclick="gerarPerfilDiario(${reg.id})">
+                Diário (PDF)
+              </button>
               <button type="button" class="btn-secondary btn-small" onclick="editarDiario(${reg.id})">
                 Editar
               </button>
@@ -2179,6 +2191,56 @@
       });
     }
 
+    function popularCamadaCard(card, c) {
+      card.querySelector(".cam-prof-de").value = c.profDe || "";
+      card.querySelector(".cam-prof-ate").value = c.profAte || "";
+      setSelectAndOutro(
+        card.querySelector(".cam-cor-select"),
+        card.querySelector(".cam-cor-outro"),
+        c.cor || ""
+      );
+      card.querySelector(".cam-descricao").value = c.descricao || "";
+      setSelectAndOutro(
+        card.querySelector(".cam-genese-select"),
+        card.querySelector(".cam-genese-outro"),
+        c.genese || ""
+      );
+      setSelectAndOutro(
+        card.querySelector(".cam-material-select"),
+        card.querySelector(".cam-material-outro"),
+        c.material || ""
+      );
+      setSelectAndOutro(
+        card.querySelector(".cam-textura-select"),
+        card.querySelector(".cam-textura-outro"),
+        c.textura || ""
+      );
+      setSelectAndOutro(
+        card.querySelector(".cam-caracteristicas-select"),
+        card.querySelector(".cam-caracteristicas-outro"),
+        c.caracteristicas || ""
+      );
+      setSelectAndOutro(
+        card.querySelector(".cam-grauselecao-select"),
+        card.querySelector(".cam-grauselecao-outro"),
+        c.grauSelecao || ""
+      );
+      setSelectAndOutro(
+        card.querySelector(".cam-obsextra-select"),
+        card.querySelector(".cam-obsextra-outro"),
+        c.obsExtras || ""
+      );
+      const chkAmostra = card.querySelector(".cam-amostra");
+      const campoIntervalo = card.querySelector(".cam-intervalo");
+      chkAmostra.checked = !!c.houveAmostra;
+      campoIntervalo.value = c.intervaloAmostra || "";
+      if (chkAmostra.checked) {
+        campoIntervalo.classList.remove("hidden");
+      } else {
+        campoIntervalo.classList.add("hidden");
+      }
+    }
+
     function adicionarCamada() {
       const container = document.getElementById("container-camadas");
       const anterior = container.querySelector(".layer-card:last-child");
@@ -2222,6 +2284,88 @@
       novo.querySelector(".cam-descricao").value =
         ant.querySelector(".cam-descricao").value;
       novo.querySelector(".cam-prof-ate").focus();
+    }
+
+    function copiarDeOutraSondagem() {
+      const todas = carregarRegistros(STORAGE_SONDAGEM)
+        .filter((r) => r.id !== editingSondagemId && (r.camadas || []).length)
+        .slice()
+        .reverse();
+      if (!todas.length) {
+        alert("Não há outra sondagem com camadas para copiar.");
+        return;
+      }
+      // Monta um menu numerado (prompt funciona offline e em qualquer navegador)
+      const linhas = todas.map((r, i) => {
+        const rotulo =
+          (r.projeto ? r.projeto + " · " : "") +
+          (r.idSond || "sem ID") +
+          " (" +
+          (r.camadas || []).length +
+          " camadas)";
+        return i + 1 + ") " + rotulo;
+      });
+      const escolha = prompt(
+        "Copiar litologia de qual sondagem?\n\n" +
+          linhas.join("\n") +
+          "\n\nDigite o número:"
+      );
+      if (escolha === null) return;
+      const idx = parseInt(escolha, 10) - 1;
+      if (isNaN(idx) || idx < 0 || idx >= todas.length) {
+        alert("Opção inválida.");
+        return;
+      }
+      const origem = todas[idx];
+
+      const incluirVOC =
+        (origem.vocs || []).length > 0 &&
+        confirm(
+          "Copiar também as " +
+            origem.vocs.length +
+            " medições de VOC? (As profundidades vêm junto; os valores você confere.)"
+        );
+
+      const cont = document.getElementById("container-camadas");
+      // Se o formulário só tem a camada inicial vazia, substitui; senão, anexa
+      const atuais = cont.querySelectorAll(".layer-card");
+      const soVazia =
+        atuais.length === 1 &&
+        !atuais[0].querySelector(".cam-prof-de").value &&
+        !atuais[0].querySelector(".cam-prof-ate").value &&
+        !atuais[0].querySelector(".cam-descricao").value;
+      if (soVazia) cont.innerHTML = "";
+
+      (origem.camadas || []).forEach((c, index) => {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = camadaTemplate(index + 1);
+        const card = wrapper.firstElementChild;
+        cont.appendChild(card);
+        initCamadaCard(card);
+        popularCamadaCard(card, c);
+      });
+
+      if (incluirVOC) {
+        const contVoc = document.getElementById("container-voc");
+        const vocVazias = contVoc.querySelectorAll(".voc-card");
+        const soVaziaVoc =
+          vocVazias.length === 1 &&
+          !vocVazias[0].querySelector(".voc-prof").value &&
+          !vocVazias[0].querySelector(".voc-valor").value;
+        if (soVaziaVoc) contVoc.innerHTML = "";
+        (origem.vocs || []).forEach((v, index) => {
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = vocTemplate(index + 1);
+          const card = wrapper.firstElementChild;
+          contVoc.appendChild(card);
+          card.querySelector(".voc-prof").value = v.profundidade || "";
+          // Valor deliberadamente em branco: cada furo tem leituras próprias
+        });
+      }
+
+      mostrarToast(
+        "Litologia copiada de " + (origem.idSond || "sondagem") + " ✓"
+      );
     }
 
     function removerCamada(btn) {
@@ -2268,14 +2412,32 @@
     function gerarSerieVOC() {
       const container = document.getElementById("container-voc");
       const cards = container.querySelectorAll(".voc-card");
-      let inicio = 0.2;
+
+      // Intervalo: pergunta ao usuário (lembra o último usado nesta sessão)
+      const intResp = prompt(
+        "Intervalo entre medições, em metros (ex.: 0,10 ou 0,20):",
+        ultimoIntervaloVOC
+      );
+      if (intResp === null) return;
+      const passo = num(intResp);
+      if (isNaN(passo) || passo <= 0) {
+        alert("Intervalo inválido.");
+        return;
+      }
+      ultimoIntervaloVOC = intResp.trim();
+
+      const arred = (v) => Math.round(v * 1000) / 1000;
+      let inicio = passo;
       if (cards.length) {
         const last = num(cards[cards.length - 1].querySelector(".voc-prof").value);
-        if (!isNaN(last)) inicio = Math.round((last + 0.2) * 100) / 100;
+        if (!isNaN(last)) inicio = arred(last + passo);
       }
+
       const profFinal = document.getElementById("sond-prof-final").value;
       const resp = prompt(
-        "Gerar medições a cada 0,20 m até qual profundidade (m)?",
+        "Gerar medições a cada " +
+          ultimoIntervaloVOC +
+          " m até qual profundidade (m)?",
         profFinal || ""
       );
       if (resp === null) return;
@@ -2293,14 +2455,12 @@
           c.remove();
         }
       });
-      for (
-        let p = inicio;
-        p <= ate + 0.001;
-        p = Math.round((p + 0.2) * 100) / 100
-      ) {
+      // Casas decimais coerentes com o intervalo (0,10 e 0,20 → 2 casas)
+      const casas = (ultimoIntervaloVOC.split(/[.,]/)[1] || "").length || 2;
+      for (let p = inicio; p <= ate + 0.0001; p = arred(p + passo)) {
         adicionarVOC();
         const novo = container.querySelector(".voc-card:last-child");
-        novo.querySelector(".voc-prof").value = p.toFixed(2);
+        novo.querySelector(".voc-prof").value = p.toFixed(casas);
       }
       const primeiroValor = container.querySelector(".voc-card .voc-valor");
       if (primeiroValor) primeiroValor.focus();
@@ -2588,56 +2748,7 @@
         const card = wrapper.firstElementChild;
         document.getElementById("container-camadas").appendChild(card);
         initCamadaCard(card);
-
-        card.querySelector(".cam-prof-de").value = c.profDe || "";
-        card.querySelector(".cam-prof-ate").value = c.profAte || "";
-        setSelectAndOutro(
-          card.querySelector(".cam-cor-select"),
-          card.querySelector(".cam-cor-outro"),
-          c.cor || ""
-        );
-        card.querySelector(".cam-descricao").value = c.descricao || "";
-
-        setSelectAndOutro(
-          card.querySelector(".cam-genese-select"),
-          card.querySelector(".cam-genese-outro"),
-          c.genese || ""
-        );
-        setSelectAndOutro(
-          card.querySelector(".cam-material-select"),
-          card.querySelector(".cam-material-outro"),
-          c.material || ""
-        );
-        setSelectAndOutro(
-          card.querySelector(".cam-textura-select"),
-          card.querySelector(".cam-textura-outro"),
-          c.textura || ""
-        );
-        setSelectAndOutro(
-          card.querySelector(".cam-caracteristicas-select"),
-          card.querySelector(".cam-caracteristicas-outro"),
-          c.caracteristicas || ""
-        );
-        setSelectAndOutro(
-          card.querySelector(".cam-grauselecao-select"),
-          card.querySelector(".cam-grauselecao-outro"),
-          c.grauSelecao || ""
-        );
-        setSelectAndOutro(
-          card.querySelector(".cam-obsextra-select"),
-          card.querySelector(".cam-obsextra-outro"),
-          c.obsExtras || ""
-        );
-
-        const chkAmostra   = card.querySelector(".cam-amostra");
-        const campoIntervalo = card.querySelector(".cam-intervalo");
-        chkAmostra.checked = !!c.houveAmostra;
-        campoIntervalo.value = c.intervaloAmostra || "";
-        if (chkAmostra.checked) {
-          campoIntervalo.classList.remove("hidden");
-        } else {
-          campoIntervalo.classList.add("hidden");
-        }
+        popularCamadaCard(card, c);
       });
       if (!reg.camadas || !reg.camadas.length) {
         adicionarCamada();
@@ -4472,7 +4583,88 @@
       window.print();
     }
 
-    // ===================== INICIALIZAÇÃO =====================
+    function gerarPerfilDiario(id) {
+      const reg = carregarRegistros(STORAGE_DIARIO).find((r) => r.id === id);
+      if (!reg) return;
+
+      const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "—";
+      const agora = new Date();
+      const geradoEm =
+        String(agora.getDate()).padStart(2, "0") + "/" +
+        String(agora.getMonth() + 1).padStart(2, "0") + "/" +
+        agora.getFullYear();
+
+      // Atividades: cada linha "07h00: ..." vira uma linha da tabela cronológica
+      const linhasAtiv = (reg.atividades || "")
+        .split("\n")
+        .map((l) => l.trim())
+        .filter((l) => l.length);
+      let ativHtml;
+      if (linhasAtiv.length) {
+        const temHora = linhasAtiv.every((l) => /^\d{1,2}h[0-5]\d\b/.test(l));
+        if (temHora) {
+          const trs = linhasAtiv
+            .map((l) => {
+              const m = l.match(/^(\d{1,2}h[0-5]\d)\s*[:\-–]?\s*(.*)$/);
+              const hora = m ? m[1] : "";
+              const txt = m ? m[2] : l;
+              return `<tr><td style="width:70px; white-space:nowrap;">${esc(hora)}</td><td>${esc(txt)}</td></tr>`;
+            })
+            .join("");
+          ativHtml =
+            `<table class="pp-table"><thead><tr><th style="width:70px;">Hora</th><th>Atividade</th></tr></thead><tbody>${trs}</tbody></table>`;
+        } else {
+          ativHtml =
+            `<div style="font-size:11px; border:1px solid #999; padding:6px 8px; white-space:pre-line;">${esc(reg.atividades)}</div>`;
+        }
+      } else {
+        ativHtml =
+          `<div style="font-size:11px; color:#777;">Sem atividades registradas.</div>`;
+      }
+
+      const obsHtml = reg.observacoes
+        ? `<div class="pp-section-label">Observações</div><div style="font-size:11px; border:1px solid #999; padding:6px 8px; white-space:pre-line;">${esc(reg.observacoes)}</div>`
+        : "";
+
+      const area = document.getElementById("print-area");
+      area.innerHTML = `
+        <div class="pp-page">
+          <div class="pp-head">
+            <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+            <div class="pp-title">DIÁRIO DE ATIVIDADES</div>
+          </div>
+
+          <table class="pp-info">
+            <tr>
+              <td><strong>Projeto</strong>${esc(reg.projeto || "—")}</td>
+              <td><strong>Cliente</strong>${esc(reg.cliente || "—")}</td>
+              <td><strong>Data</strong>${esc(dataFmt)}</td>
+            </tr>
+            <tr>
+              <td><strong>Local</strong>${esc(reg.local || "—")}</td>
+              <td><strong>Horário de trabalho</strong>${esc(reg.horario || "—")}</td>
+              <td><strong>Condições climáticas</strong>${esc(reg.clima || "—")}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><strong>Responsável</strong>${esc(reg.responsavel || "—")}</td>
+              <td><strong>Equipe / Auxiliares</strong>${esc(reg.auxiliares || "—")}</td>
+            </tr>
+          </table>
+
+          <div class="pp-section-label">Atividades desenvolvidas</div>
+          ${ativHtml}
+          ${obsHtml}
+
+          <div class="pp-sign">
+            <div>Responsável técnico</div>
+            <div>Cliente / Fiscalização</div>
+          </div>
+          <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
+        </div>
+      `;
+
+      window.print();
+    }
 
     (async function init() {
       await carregarBanco();
