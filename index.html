@@ -380,6 +380,39 @@
     .st-btn.done .st-status {
       color: #15803d;
     }
+    /* Seleção múltipla para exportação em bulk */
+    .record-sel {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .record-sel input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      margin-top: 2px;
+      flex: none;
+      accent-color: #2563eb;
+    }
+    .record-sel > .record-body {
+      flex: 1;
+    }
+    .bulk-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+    }
+    .bulk-bar .bulk-count {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1d4ed8;
+      margin-right: auto;
+    }
     /* Fotos no formulário */
     .fotos-grid {
       display: grid;
@@ -591,6 +624,10 @@
     .pp-page {
       font-size: 12px;
       color: #111111;
+    }
+    /* Em exportação múltipla, cada documento começa em nova página */
+    .pp-page + .pp-page {
+      page-break-before: always;
     }
     .pp-head {
       display: flex;
@@ -904,7 +941,10 @@
         <div id="projdet-sts" class="st-grid"></div>
 
         <div class="btn-group" style="margin-top: 14px;">
-          <button type="button" class="btn-primary" onclick="abrirDiarioDoProjeto()">
+          <button type="button" class="btn-primary" onclick="exportarProjetoPDF()">
+            Exportar projeto em PDF
+          </button>
+          <button type="button" class="btn-secondary" onclick="abrirDiarioDoProjeto()">
             Diário de Atividades do projeto
           </button>
           <button type="button" class="btn-secondary" onclick="editarProjeto()">
@@ -1081,6 +1121,15 @@
 
       <div class="card">
         <div class="section-title">Registros salvos</div>
+        <div id="bulk-bar-diario" class="bulk-bar hidden">
+          <span class="bulk-count" id="bulk-count-diario">0 selecionados</span>
+          <button type="button" class="btn-primary btn-small" onclick="exportarBulkDiario()">
+            Exportar PDF
+          </button>
+          <button type="button" class="btn-secondary btn-small" onclick="limparSelecaoDiario()">
+            Limpar
+          </button>
+        </div>
         <div id="lista-diario" class="small-muted">
           Nenhum registro salvo ainda.
         </div>
@@ -1330,9 +1379,18 @@
       <div class="card">
         <div class="section-title">Registros salvos</div>
         <p class="small-muted" style="margin-top: 0;">
-          Toque em "Perfil (PDF)" para gerar o perfil pronto e salvar em PDF
-          (use "Salvar como PDF" na tela de impressão do celular).
+          Toque em "Perfil (PDF)" para gerar um boletim, ou marque vários e use
+          "Exportar PDF" para gerar todos de uma vez.
         </p>
+        <div id="bulk-bar-sondagem" class="bulk-bar hidden">
+          <span class="bulk-count" id="bulk-count-sondagem">0 selecionados</span>
+          <button type="button" class="btn-primary btn-small" onclick="exportarBulkSondagem()">
+            Exportar PDF
+          </button>
+          <button type="button" class="btn-secondary btn-small" onclick="limparSelecaoSondagem()">
+            Limpar
+          </button>
+        </div>
         <div id="lista-sondagem" class="small-muted">
           Nenhum registro salvo ainda.
         </div>
@@ -1910,6 +1968,7 @@
       const container = document.getElementById("lista-diario");
       if (!lista.length) {
         container.textContent = "Nenhum registro salvo ainda.";
+        atualizarBulkBarDiario();
         return;
       }
       container.innerHTML = "";
@@ -1918,9 +1977,12 @@
         .reverse()
         .forEach((reg) => {
           const div = document.createElement("div");
-          div.className = "record";
+          div.className = "record record-sel";
           const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "";
+          const marcado = selDiario.has(reg.id) ? "checked" : "";
           div.innerHTML = `
+            <input type="checkbox" ${marcado} onchange="alternarSelDiario(${reg.id}, this.checked)" aria-label="Selecionar" />
+            <div class="record-body">
             <div class="record-title">
               Projeto ${esc(reg.projeto || "(sem nº)")} – ${esc(reg.local || "Local não informado")}
             </div>
@@ -1959,9 +2021,11 @@
                 Excluir
               </button>
             </div>
+            </div>
           `;
           container.appendChild(div);
         });
+      atualizarBulkBarDiario();
     }
 
     function exportarDiarioCSV() {
@@ -2796,6 +2860,7 @@
       const container = document.getElementById("lista-sondagem");
       if (!lista.length) {
         container.textContent = "Nenhum registro salvo ainda.";
+        atualizarBulkBarSondagem();
         return;
       }
       container.innerHTML = "";
@@ -2804,11 +2869,14 @@
         .reverse()
         .forEach((reg) => {
           const div = document.createElement("div");
-          div.className = "record";
+          div.className = "record record-sel";
           const dataFmt   = reg.data ? reg.data.split("-").reverse().join("/") : "";
           const qtdCamadas = (reg.camadas || []).length;
           const qtdVOCs    = (reg.vocs || []).length;
+          const marcado = selSondagem.has(reg.id) ? "checked" : "";
           div.innerHTML = `
+            <input type="checkbox" ${marcado} onchange="alternarSelSondagem(${reg.id}, this.checked)" aria-label="Selecionar" />
+            <div class="record-body">
             <div class="record-title">
               Projeto ${esc(reg.projeto || "(sem nº)")} – ${
                 esc(reg.idSond || "ID não informado")
@@ -2846,9 +2914,11 @@
                 Excluir
               </button>
             </div>
+            </div>
           `;
           container.appendChild(div);
         });
+      atualizarBulkBarSondagem();
     }
 
     function exportarSondagemCSV() {
@@ -3247,6 +3317,97 @@
       document.getElementById("diario-local").value = p.local || "";
       document.getElementById("diario-projetoid").value = p.id;
       showSection("diario");
+    }
+
+    async function exportarProjetoPDF() {
+      const p = carregarRegistros(STORAGE_PROJETOS).find(
+        (x) => x.id === projetoAtivoId
+      );
+      if (!p) return;
+
+      const sondagens = sondagensDoProjeto(p.id).sort((a, b) =>
+        (a.idSond || "").localeCompare(b.idSond || "", "pt", { numeric: true })
+      );
+      const diarios = carregarRegistros(STORAGE_DIARIO)
+        .filter((r) => r.projetoId === p.id)
+        .sort((a, b) => (a.data || "").localeCompare(b.data || "") || a.id - b.id);
+
+      if (!sondagens.length && !diarios.length) {
+        alert(
+          "Este projeto ainda não tem boletins nem diários preenchidos para exportar."
+        );
+        return;
+      }
+
+      mostrarToast("Montando PDF do projeto…");
+
+      const agora = new Date();
+      const geradoEm =
+        String(agora.getDate()).padStart(2, "0") + "/" +
+        String(agora.getMonth() + 1).padStart(2, "0") + "/" +
+        agora.getFullYear();
+      const pocos = sondagens.filter((r) => r.poco).length;
+
+      // Capa do projeto
+      const capa = `
+        <div class="pp-page">
+          <div class="pp-head">
+            <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+            <div class="pp-title">RELATÓRIO DE CAMPO</div>
+          </div>
+          <table class="pp-info">
+            <tr>
+              <td><strong>Projeto</strong>${esc(p.numero || "—")}</td>
+              <td><strong>Cliente</strong>${esc(p.cliente || "—")}</td>
+            </tr>
+            <tr>
+              <td><strong>Local</strong>${esc(p.local || "—")}</td>
+              <td><strong>Empresa de sondagem</strong>${esc(p.empresa || "—")}</td>
+            </tr>
+            <tr>
+              <td><strong>Sondagens preenchidas</strong>${sondagens.length} de ${p.qtdSond || 0}</td>
+              <td><strong>Poços instalados</strong>${pocos} de ${p.qtdPocos || 0}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><strong>Diários incluídos</strong>${diarios.length}</td>
+            </tr>
+          </table>
+          <div class="pp-section-label">Conteúdo deste relatório</div>
+          <div style="font-size:11px;">
+            ${
+              sondagens.length
+                ? "Boletins de sondagem: " +
+                  esc(sondagens.map((r) => r.idSond || "?").join(", ")) +
+                  "<br>"
+                : ""
+            }
+            ${
+              diarios.length
+                ? "Diários: " +
+                  esc(
+                    diarios
+                      .map((r) =>
+                        r.data ? r.data.split("-").reverse().join("/") : "?"
+                      )
+                      .join(", ")
+                  )
+                : ""
+            }
+          </div>
+          <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
+        </div>
+      `;
+
+      const partes = [capa];
+      for (const reg of sondagens) {
+        partes.push(await montarHTMLPerfil(reg));
+      }
+      for (const reg of diarios) {
+        partes.push(montarHTMLDiario(reg));
+      }
+
+      document.getElementById("print-area").innerHTML = partes.join("");
+      imprimirComNome(sanitizarNome(p.numero) + "_Relatorio-de-Campo");
     }
 
     function renderListaProjetos() {
@@ -4372,10 +4533,7 @@
       return d || "—";
     }
 
-    async function gerarPerfil(id) {
-      const reg = carregarRegistros(STORAGE_SONDAGEM).find((r) => r.id === id);
-      if (!reg) return;
-
+    async function montarHTMLPerfil(reg) {
       const camadas = (reg.camadas || [])
         .slice()
         .sort((a, b) => {
@@ -4504,8 +4662,6 @@
         "/" +
         agora.getFullYear();
 
-      const area = document.getElementById("print-area");
-
       const tabelaCamadas = `
               <table class="pp-table">
                 <thead>
@@ -4543,7 +4699,7 @@
             <div style="flex:1;">${tabelaCamadas}${vocHtml}${obsHtml}</div>
           </div>`;
 
-      area.innerHTML = `
+      return `
         <div class="pp-page">
           <div class="pp-head">
             <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
@@ -4579,14 +4735,9 @@
           ${fotosHtml}
         </div>
       `;
-
-      window.print();
     }
 
-    function gerarPerfilDiario(id) {
-      const reg = carregarRegistros(STORAGE_DIARIO).find((r) => r.id === id);
-      if (!reg) return;
-
+    function montarHTMLDiario(reg) {
       const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "—";
       const agora = new Date();
       const geradoEm =
@@ -4626,8 +4777,7 @@
         ? `<div class="pp-section-label">Observações</div><div style="font-size:11px; border:1px solid #999; padding:6px 8px; white-space:pre-line;">${esc(reg.observacoes)}</div>`
         : "";
 
-      const area = document.getElementById("print-area");
-      area.innerHTML = `
+      return `
         <div class="pp-page">
           <div class="pp-head">
             <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
@@ -4662,8 +4812,161 @@
           <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
         </div>
       `;
+    }
 
+    // ===================== SELEÇÃO MÚLTIPLA / BULK =====================
+
+    const selDiario = new Set();
+    const selSondagem = new Set();
+
+    function alternarSelDiario(id, marcado) {
+      if (marcado) selDiario.add(id);
+      else selDiario.delete(id);
+      atualizarBulkBarDiario();
+    }
+    function alternarSelSondagem(id, marcado) {
+      if (marcado) selSondagem.add(id);
+      else selSondagem.delete(id);
+      atualizarBulkBarSondagem();
+    }
+    function limparSelecaoDiario() {
+      selDiario.clear();
+      renderListaDiario();
+    }
+    function limparSelecaoSondagem() {
+      selSondagem.clear();
+      renderListaSondagem();
+    }
+    function atualizarBulkBarDiario() {
+      const bar = document.getElementById("bulk-bar-diario");
+      const cnt = document.getElementById("bulk-count-diario");
+      if (!bar) return;
+      if (selDiario.size > 0) {
+        bar.classList.remove("hidden");
+        cnt.textContent =
+          selDiario.size + (selDiario.size === 1 ? " selecionado" : " selecionados");
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+    function atualizarBulkBarSondagem() {
+      const bar = document.getElementById("bulk-bar-sondagem");
+      const cnt = document.getElementById("bulk-count-sondagem");
+      if (!bar) return;
+      if (selSondagem.size > 0) {
+        bar.classList.remove("hidden");
+        cnt.textContent =
+          selSondagem.size +
+          (selSondagem.size === 1 ? " selecionado" : " selecionados");
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+
+    // Imprime vários documentos num único PDF (cada um em sua página)
+    async function imprimirEmBulk(htmls, nomeArquivo) {
+      if (!htmls.length) {
+        alert("Nada selecionado para exportar.");
+        return;
+      }
+      document.getElementById("print-area").innerHTML = htmls.join("");
+      imprimirComNome(nomeArquivo);
+    }
+
+    async function exportarBulkSondagem() {
+      const lista = carregarRegistros(STORAGE_SONDAGEM);
+      // Mantém a ordem cronológica (profundidade de campo) por id crescente
+      const sels = lista
+        .filter((r) => selSondagem.has(r.id))
+        .sort((a, b) => a.id - b.id);
+      if (!sels.length) {
+        alert("Selecione ao menos uma sondagem.");
+        return;
+      }
+      const htmls = [];
+      for (const reg of sels) {
+        htmls.push(await montarHTMLPerfil(reg));
+      }
+      // Nome: se todas do mesmo projeto, usa o projeto; senão, genérico
+      const projetos = [...new Set(sels.map((r) => r.projeto).filter(Boolean))];
+      const base =
+        projetos.length === 1
+          ? sanitizarNome(projetos[0]) + "_Sondagens"
+          : "Sondagens";
+      await imprimirEmBulk(htmls, base + "_" + sels.length + "-boletins");
+    }
+
+    async function exportarBulkDiario() {
+      const lista = carregarRegistros(STORAGE_DIARIO);
+      const sels = lista
+        .filter((r) => selDiario.has(r.id))
+        .sort((a, b) => (a.data || "").localeCompare(b.data || "") || a.id - b.id);
+      if (!sels.length) {
+        alert("Selecione ao menos um diário.");
+        return;
+      }
+      const htmls = sels.map((reg) => montarHTMLDiario(reg));
+      const projetos = [...new Set(sels.map((r) => r.projeto).filter(Boolean))];
+      const base =
+        projetos.length === 1
+          ? "Diarios_" + sanitizarNome(projetos[0])
+          : "Diarios";
+      await imprimirEmBulk(htmls, base + "_" + sels.length + "-dias");
+    }
+
+    // ===================== NOMES DE ARQUIVO E IMPRESSÃO =====================
+
+    // Remove acentos e caracteres problemáticos para nome de arquivo
+    function sanitizarNome(s) {
+      return String(s || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^\w\-]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    function nomeArquivoSondagem(reg) {
+      const partes = [
+        sanitizarNome(reg.projeto) || "Sondagem",
+        sanitizarNome(reg.idSond) || "ST",
+      ];
+      if (reg.data) partes.push(reg.data); // já é AAAA-MM-DD
+      return partes.join("_");
+    }
+
+    function nomeArquivoDiario(reg) {
+      const partes = ["Diario", sanitizarNome(reg.projeto) || "Projeto"];
+      if (reg.data) partes.push(reg.data);
+      return partes.join("_");
+    }
+
+    // Define o nome sugerido na tela "Salvar como PDF" via document.title
+    function imprimirComNome(nome) {
+      const original = document.title;
+      document.title = nome;
+      const restaura = () => {
+        document.title = original;
+        window.removeEventListener("afterprint", restaura);
+      };
+      window.addEventListener("afterprint", restaura);
       window.print();
+      // Fallback caso afterprint não dispare (alguns navegadores)
+      setTimeout(restaura, 1500);
+    }
+
+    async function gerarPerfil(id) {
+      const reg = carregarRegistros(STORAGE_SONDAGEM).find((r) => r.id === id);
+      if (!reg) return;
+      document.getElementById("print-area").innerHTML = await montarHTMLPerfil(reg);
+      imprimirComNome(nomeArquivoSondagem(reg));
+    }
+
+    function gerarPerfilDiario(id) {
+      const reg = carregarRegistros(STORAGE_DIARIO).find((r) => r.id === id);
+      if (!reg) return;
+      document.getElementById("print-area").innerHTML = montarHTMLDiario(reg);
+      imprimirComNome(nomeArquivoDiario(reg));
     }
 
     (async function init() {
