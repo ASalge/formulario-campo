@@ -907,13 +907,22 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    /* Tabela densa para anexos (VOC, liners) */
+    /* Tabela densa (VOC, liners) */
+    .pp-table-dense {
+      /* Larguras iguais e independentes do conteúdo: garante que a tabela
+         jamais ultrapasse a margem direita da página. */
+      table-layout: fixed;
+      width: 100%;
+      max-width: 100%;
+    }
     .pp-table-dense th,
     .pp-table-dense td {
       padding: 1px 3px;
       font-size: 7.8px;
       text-align: center;
       line-height: 1.25;
+      overflow: hidden;
+      word-break: break-word;
     }
     .pp-fotos {
       display: grid;
@@ -5349,8 +5358,10 @@
       let vocAbaixoHtml = "";    // largura total, abaixo do corpo (2ª opção)
       if (vocs.length) {
         const px2mm = 0.2646;
-        const larguraUtil = 190;                       // A4 útil, margens 10mm
-        const larguraDireita = larguraUtil - larguraWrap - 3; // faixa à direita
+        // A4 útil = 190mm (210 - 2x10 de margem). Descontamos 2mm de folga
+        // para absorver arredondamentos do renderizador de impressão.
+        const larguraUtil = 188;
+        const larguraDireita = larguraUtil - larguraWrap - 4; // faixa à direita
 
         // --- Quanto a tabela de litologia ocupa verticalmente? ---
         // As colunas fixas (#, Prof., Amostra) somam ~40mm; o resto é descrição.
@@ -5385,8 +5396,12 @@
 
         // Altura de uma linha da tabela densa, em mm
         const alturaLinha = (f) => f * 1.25 * px2mm + 0.79;
-        // Largura de um par (Prof. + ppm) considerando o cabeçalho "Prof. (m)"
-        const larguraPar = (f) => f * px2mm * 0.5 * 12 + 3.2;
+        // Largura real de um par de colunas (Prof. + ppm), em mm.
+        // O cabeçalho "Prof. (m)" (9 caracteres) é o que dita a largura;
+        // soma-se o padding (3px de cada lado) e a borda de cada célula.
+        // O fator 1.06 é a margem de segurança contra o transbordo lateral.
+        const larguraPar = (f) =>
+          ((9 * 0.52 * f + 7) + (3 * 0.52 * f + 7)) * px2mm * 1.06;
 
         const montarTabelaVOC = (por, fonte) => {
           let cels = "";
@@ -5518,7 +5533,7 @@
               </div>
               ${legendaHtml}
             </div>
-            <div style="flex:1; min-width:0;">
+            <div style="flex:1; min-width:0; overflow:hidden;">
               ${tabelaCamadas}
               ${obsHtml}
               ${vocLateralHtml}
