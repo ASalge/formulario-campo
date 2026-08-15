@@ -5342,33 +5342,51 @@
         `);
       }
 
-      // -- Medições de VOC: cabem na própria página do perfil? --
-      // Orçamento vertical (A4 útil 277mm): cabeçalho ~16 + identificação
-      // (5,2mm/linha) + coluna 148 + legenda. O que sobrar abaixo do corpo
-      // recebe a tabela; só vai para anexo se realmente não couber.
+      // -- Medições de VOC: encaixadas AO LADO da coluna, abaixo da
+      //    descrição litológica, aproveitando o espaço vertical livre. --
       const vocs = reg.vocs || [];
-      let vocInlineHtml = "";
+      let vocLateralHtml = "";   // dentro da faixa à direita da coluna
+      let vocAbaixoHtml = "";    // largura total, abaixo do corpo (2ª opção)
       if (vocs.length) {
+        const px2mm = 0.2646;
+        const larguraUtil = 190;                       // A4 útil, margens 10mm
+        const larguraDireita = larguraUtil - larguraWrap - 3; // faixa à direita
+
+        // --- Quanto a tabela de litologia ocupa verticalmente? ---
+        // As colunas fixas (#, Prof., Amostra) somam ~40mm; o resto é descrição.
+        const larguraDesc = larguraDireita - 42;
+        const larguraCharDesc = fonteTab * 0.5 * px2mm; // largura média do caractere
+        const charsPorLinha = Math.max(10, larguraDesc / larguraCharDesc);
+        const alturaLinhaTexto = fonteTab * 1.3 * px2mm;
+        let alturaTabelaLito = alturaLinhaTexto + 1.6; // cabeçalho
+        camadas.forEach((c) => {
+          const texto = montarDescricaoCamada(c) || "";
+          const linhas = Math.max(1, Math.ceil(texto.length / charsPorLinha));
+          alturaTabelaLito += linhas * alturaLinhaTexto + 1.6;
+        });
+        if (!camadas.length) alturaTabelaLito += alturaLinhaTexto + 1.6;
+
+        // Observações gerais, quando houver, também ocupam a faixa direita
+        let alturaObs = 0;
+        if (reg.obs) {
+          const charsObs = Math.max(10, larguraDireita / (9 * 0.5 * px2mm));
+          alturaObs =
+            4 + Math.ceil(reg.obs.length / charsObs) * (9 * 1.3 * px2mm) + 3;
+        }
+
+        // Espaço livre à direita: da base da litologia até o fim da coluna
+        const alturaLivreLateral =
+          H - alturaTabelaLito - alturaObs - 4; // 4mm de respiro
+
+        // Espaço livre abaixo do corpo inteiro (2ª opção)
         const nInfo = 2 + (pocoRow ? 1 : 0) + (linerRow ? 1 : 0) + (coordRow ? 1 : 0);
-        const alturaLivre =
+        const alturaLivreAbaixo =
           277 - 16 - (nInfo * 5.2 + 2) - (H + (temPoco ? 12 : 3)) - 6;
 
-        // Altura de linha da tabela densa, em mm, para uma dada fonte em px
-        const alturaLinha = (f) => f * 1.25 * 0.2646 + 0.79;
-
-        // Combinações da mais legível para a mais compacta
-        const combos = [
-          { por: 4, fonte: 8 },
-          { por: 5, fonte: 7.5 },
-          { por: 6, fonte: 7 },
-          { por: 8, fonte: 7 },
-          { por: 10, fonte: 6.5 },
-          { por: 12, fonte: 6.2 },
-        ];
-        const escolha = combos.find((c) => {
-          const linhas = Math.ceil(vocs.length / c.por) + 1; // + cabeçalho
-          return linhas * alturaLinha(c.fonte) <= alturaLivre;
-        });
+        // Altura de uma linha da tabela densa, em mm
+        const alturaLinha = (f) => f * 1.25 * px2mm + 0.79;
+        // Largura de um par (Prof. + ppm) considerando o cabeçalho "Prof. (m)"
+        const larguraPar = (f) => f * px2mm * 0.5 * 12 + 3.2;
 
         const montarTabelaVOC = (por, fonte) => {
           let cels = "";
@@ -5387,22 +5405,74 @@
           );
         };
 
-        if (escolha) {
-          // Cabe na página do perfil, logo abaixo do corpo
-          vocInlineHtml =
-            `<div class="pp-section-label">Medições de VOC (PID)</div>` +
-            montarTabelaVOC(escolha.por, escolha.fonte);
+        // Fontes da mais legível para a mais compacta
+        const fontes = [8, 7.5, 7, 6.5, 6.2, 5.8];
+
+        // Procura a maior fonte legível que caiba, ocupando a largura toda
+        // (a tabela deve preencher a faixa, não virar uma coluna estreita).
+        const encaixar = (largura, altura) => {
+          if (altura < 8) return null;
+          for (const fonte of fontes) {
+            const por = Math.floor(largura / larguraPar(fonte));
+            if (por < 1) continue;
+            const linhas = Math.ceil(vocs.length / por) + 1; // + cabeçalho
+            if (linhas * alturaLinha(fonte) <= altura) return { por, fonte };
+          }
+          return null;
+        };
+
+        const rotulo = `<div class="pp-section-label">Medições de VOC (PID)</div>`;
+
+        // 1ª opção: ao lado da coluna, abaixo da litologia
+        const lateral = encaixar(larguraDireita, alturaLivreLateral);
+        if (lateral) {
+          vocLateralHtml = rotulo + montarTabelaVOC(lateral.por, lateral.fonte);
         } else {
-          // Volume grande demais: anexo em folha própria
+          // 2ª opção: largura total, abaixo do corpo
+          const abaixo = encaixar(larguraUtil, alturaLivreAbaixo);
+          if (abaixo) {
+            vocAbaixoHtml = rotulo + montarTabelaVOC(abaixo.por, abaixo.fonte);
+          } else {
+            // 3ª opção: anexo em folha própria
+            anexos.push(`
+              <div class="pp-page pp-cont">
+                <div class="pp-head">
+                  <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+                  <div class="pp-title">MEDIÇÕES DE VOC (PID)<br>${esc(
+                    reg.projeto || ""
+                  )} · ${esc(reg.idSond || "")}</div>
+                </div>
+                ${montarTabelaVOC(12, 6.2)}
+              </div>
+            `);
+          }
+        }
+      }
+
+      // -- Anexo: registro fotográfico --
+      if (reg.fotos && reg.fotos.length) {
+        const itens = [];
+        for (const ref of reg.fotos) {
+          const f = await idbGet("fotos", ref.id);
+          if (f && f.blob) {
+            const dataUrl = await blobParaDataURL(f.blob);
+            itens.push(
+              `<div class="pp-foto"><img src="${dataUrl}" /><div>${esc(
+                ref.legenda || ""
+              )}</div></div>`
+            );
+          }
+        }
+        if (itens.length) {
           anexos.push(`
             <div class="pp-page pp-cont">
               <div class="pp-head">
                 <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
-                <div class="pp-title">MEDIÇÕES DE VOC (PID)<br>${esc(
+                <div class="pp-title">REGISTRO FOTOGRÁFICO<br>${esc(
                   reg.projeto || ""
                 )} · ${esc(reg.idSond || "")}</div>
               </div>
-              ${montarTabelaVOC(12, 6.2)}
+              <div class="pp-fotos">${itens.join("")}</div>
             </div>
           `);
         }
@@ -5451,42 +5521,13 @@
             <div style="flex:1; min-width:0;">
               ${tabelaCamadas}
               ${obsHtml}
+              ${vocLateralHtml}
             </div>
           </div>
 
-          ${vocInlineHtml}
-
+          ${vocAbaixoHtml}
         </div>
       `;
-
-      // -- Anexo: registro fotográfico --
-      if (reg.fotos && reg.fotos.length) {
-        const itens = [];
-        for (const ref of reg.fotos) {
-          const f = await idbGet("fotos", ref.id);
-          if (f && f.blob) {
-            const dataUrl = await blobParaDataURL(f.blob);
-            itens.push(
-              `<div class="pp-foto"><img src="${dataUrl}" /><div>${esc(
-                ref.legenda || ""
-              )}</div></div>`
-            );
-          }
-        }
-        if (itens.length) {
-          anexos.push(`
-            <div class="pp-page pp-cont">
-              <div class="pp-head">
-                <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
-                <div class="pp-title">REGISTRO FOTOGRÁFICO<br>${esc(
-                  reg.projeto || ""
-                )} · ${esc(reg.idSond || "")}</div>
-              </div>
-              <div class="pp-fotos">${itens.join("")}</div>
-            </div>
-          `);
-        }
-      }
 
       return pagina1 + anexos.join("");
     }
