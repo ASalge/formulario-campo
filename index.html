@@ -235,6 +235,72 @@
       margin-bottom: 8px;
       background: #f9fafb;
     }
+    /* ---------- Cartão de liner (compacto, à prova de tela pequena) ---------- */
+    .liner-card {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #f9fafb;
+    }
+    .liner-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .liner-head input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      min-height: 0;
+      margin: 0;
+      flex: none;
+      accent-color: #2563eb;
+    }
+    .liner-tag {
+      font-weight: 700;
+      font-size: 15px;
+      color: #111827;
+      background: #e5e7eb;
+      border-radius: 999px;
+      padding: 3px 12px;
+    }
+    .liner-pct {
+      font-weight: 700;
+      font-size: 15px;
+      margin-left: auto;
+      min-width: 44px;
+      text-align: right;
+    }
+    .liner-head button {
+      flex: none;
+      min-height: 38px;
+      padding: 6px 12px;
+      margin: 0;
+    }
+    .liner-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .liner-fields label {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 3px;
+      white-space: nowrap;
+    }
+    .liner-fields input {
+      margin-bottom: 0;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .liner-card .liner-obs {
+      margin-top: 8px;
+      margin-bottom: 0;
+      min-height: 42px;
+      padding: 9px 10px;
+      font-size: 14px;
+    }
     .inline-checkbox {
       display: flex;
       align-items: center;
@@ -626,11 +692,13 @@
       font-size: 11px;
       color: #111111;
       width: 100%;
-      /* Cada documento ocupa no máximo uma página; nada transborda */
+      /* Cada documento é um bloco único: cabeçalho, identificação e perfil
+         ficam obrigatoriamente na mesma folha. */
       page-break-inside: avoid;
       break-inside: avoid;
       page-break-after: always;
       break-after: page;
+      overflow: hidden;
     }
     .pp-page:last-child {
       page-break-after: auto;
@@ -684,8 +752,10 @@
       display: flex;
       gap: 10px;
       align-items: flex-start;
-      page-break-inside: avoid;
-      break-inside: avoid;
+      /* NÃO usar avoid aqui: se o corpo for tratado como bloco indivisível
+         maior que o espaço restante, o navegador o empurra sozinho para a
+         página seguinte e separa o cabeçalho do perfil. A altura fixa da
+         coluna já garante que tudo cabe em uma folha. */
     }
     .pp-colwrap {
       flex: none;
@@ -733,13 +803,15 @@
       padding: 0 2px 0 0;
       font-weight: 600;
     }
-    /* ---------- Desenho do poço de monitoramento ---------- */
+    /* ---------- Poço sobreposto ao perfil (faixa central) ---------- */
+    /* O poço é desenhado por cima da coluna litológica, translúcido,
+       de modo que a litologia permaneça visível por baixo. */
     .pp-well {
       position: absolute;
       top: 0;
       bottom: 0;
-      border-left: 1px solid #111;
-      background: #ffffff;
+      left: 50%;
+      transform: translateX(-50%);
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
@@ -750,29 +822,30 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    /* Pré-filtro: areia/pedrisco (pontilhado) ocupando a largura do anular */
+    /* Pré-filtro: pontilhado de areia sobre a litologia (translúcido) */
     .pp-w-prefiltro {
-      background-color: #efe6cf;
-      background-image: radial-gradient(#9c8b62 0.6px, transparent 0.7px);
-      background-size: 3px 3px;
-      border: 1px solid #9c8b62;
+      background-color: rgba(255, 252, 240, 0.42);
+      background-image: radial-gradient(#6b5c34 0.55px, transparent 0.65px);
+      background-size: 2.4px 2.4px;
+      border-left: 0.8px solid #6b5c34;
+      border-right: 0.8px solid #6b5c34;
     }
-    /* Tubo liso: duas paredes verticais */
+    /* Tubo liso: paredes verticais, interior translúcido */
     .pp-w-tubo {
-      background: #ffffff;
-      border-left: 1.4px solid #111;
-      border-right: 1.4px solid #111;
+      background: rgba(255, 255, 255, 0.55);
+      border-left: 1.3px solid #111;
+      border-right: 1.3px solid #111;
     }
     /* Filtro: tubo ranhurado (hachura horizontal) */
     .pp-w-filtro {
-      background-color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.55);
       background-image: repeating-linear-gradient(
         to bottom,
         #111 0 0.7px,
-        transparent 0.7px 2.6px
+        transparent 0.7px 2.4px
       );
-      border-left: 1.4px solid #111;
-      border-right: 1.4px solid #111;
+      border-left: 1.3px solid #111;
+      border-right: 1.3px solid #111;
     }
     /* Tampão de fundo */
     .pp-w-fundo {
@@ -785,6 +858,11 @@
       color: #1d4ed8;
       white-space: nowrap;
       line-height: 1;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 0.3px 1.5px;
+      border-radius: 2px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .pp-legend {
       font-size: 7.5px;
@@ -861,26 +939,6 @@
       margin: 6px 0 3px 0;
       page-break-after: avoid;
       break-after: avoid;
-    }
-    .pp-sign {
-      display: flex;
-      gap: 30px;
-      margin-top: 8mm;
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-    .pp-sign div {
-      flex: 1;
-      border-top: 1px solid #111;
-      text-align: center;
-      padding-top: 3px;
-      font-size: 9px;
-    }
-    .pp-footer {
-      margin-top: 4px;
-      font-size: 8px;
-      color: #777;
-      text-align: right;
     }
   </style>
 </head>
@@ -2720,31 +2778,30 @@
       const rot = "L" + String(n).padStart(2, "0");
       return `
         <div class="liner-card" data-tamanho="${tamanhoCm || ""}">
-          <div style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+          <div class="liner-head">
             <input type="checkbox" class="liner-sel" aria-label="Selecionar liner"
-                   onchange="atualizarBulkBarLiner()"
-                   style="width:24px; height:24px; min-height:0; flex:none; margin-bottom:16px; accent-color:#2563eb;" />
-            <div style="flex:1.1; min-width:118px;">
-              <label>Liner / intervalo (m)</label>
-              <div style="display:flex; gap:4px; align-items:center;">
-                <span class="tag" style="margin:0 0 14px 0; font-weight:700;">${rot}</span>
-                <input type="number" step="0.01" inputmode="decimal" class="liner-de" value="${de}" />
-                <input type="number" step="0.01" inputmode="decimal" class="liner-ate" value="${ate}" />
-              </div>
+                   onchange="atualizarBulkBarLiner()" />
+            <span class="liner-tag">${rot}</span>
+            <span class="liner-pct small-muted">—</span>
+            <button type="button" class="btn-danger btn-small"
+                    onclick="removerLiner(this)">✕</button>
+          </div>
+          <div class="liner-fields">
+            <div>
+              <label>De (m)</label>
+              <input type="number" step="0.01" inputmode="decimal" class="liner-de" value="${de}" />
             </div>
-            <div style="flex:1; min-width:110px;">
-              <label>Recuperação (cm)</label>
+            <div>
+              <label>Até (m)</label>
+              <input type="number" step="0.01" inputmode="decimal" class="liner-ate" value="${ate}" />
+            </div>
+            <div>
+              <label>Rec. (cm)</label>
               <input type="number" step="1" inputmode="decimal" class="liner-rec"
                      oninput="atualizarPctLiner(this)" />
             </div>
-            <div style="flex:none; min-width:52px;">
-              <label>&nbsp;</label>
-              <div class="liner-pct small-muted" style="margin-bottom:16px; font-weight:600;">—</div>
-            </div>
-            <button type="button" class="btn-danger btn-small" onclick="removerLiner(this)"
-                    style="flex:none; margin-bottom:14px;">✕</button>
           </div>
-          <input type="text" class="liner-obs" placeholder="Observações do liner (opcional)" />
+          <input type="text" class="liner-obs" placeholder="Observações (opcional)" />
         </div>
       `;
     }
@@ -2757,8 +2814,10 @@
       if (isNaN(tam) || tam <= 0 || isNaN(rec)) {
         el.textContent = "—";
         el.style.color = "";
+        el.classList.add("small-muted");
         return;
       }
+      el.classList.remove("small-muted");
       const pct = Math.round((rec / tam) * 100);
       el.textContent = pct + "%";
       el.style.color = pct >= 70 ? "#15803d" : pct >= 40 ? "#b45309" : "#b91c1c";
@@ -2798,7 +2857,7 @@
       document
         .querySelectorAll("#container-liners .liner-card")
         .forEach((card, i) => {
-          const tag = card.querySelector(".tag");
+          const tag = card.querySelector(".liner-tag");
           if (tag) tag.textContent = "L" + String(i + 1).padStart(2, "0");
         });
     }
@@ -3826,11 +3885,6 @@
 
       mostrarToast("Montando PDF do projeto…");
 
-      const agora = new Date();
-      const geradoEm =
-        String(agora.getDate()).padStart(2, "0") + "/" +
-        String(agora.getMonth() + 1).padStart(2, "0") + "/" +
-        agora.getFullYear();
       const pocos = sondagens.filter((r) => r.poco).length;
 
       // Capa do projeto
@@ -3879,7 +3933,6 @@
                 : ""
             }
           </div>
-          <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
         </div>
       `;
 
@@ -5042,7 +5095,10 @@
 
       // Altura da coluna em mm: fixa, para o perfil caber sempre em uma página
       // independentemente da profundidade (a escala é que muda).
-      const H = 165; // mm
+      // Orçamento A4 (277mm úteis): cabeçalho ~15 + identificação ~30 +
+      // coluna 148 + legenda ~8 = ~201mm, com folga para o cabeçalho/rodapé
+      // que o próprio navegador possa inserir na impressão.
+      const H = 148; // mm
       const mm = (v) => v.toFixed(2) + "mm";
       const yDe = (p) => (p / profMax) * H; // profundidade (m) -> mm
 
@@ -5084,7 +5140,9 @@
       // ----- Desenho do poço de monitoramento -----
       let wellHtml = "";
       let legendaHtml = "";
-      const larguraCol = temPoco ? 26 : 34; // mm
+      // Coluna litológica única; o poço é desenhado sobreposto a ela.
+      const larguraCol = 38; // mm
+      const larguraPoco = 13; // mm (faixa central do poço)
       if (temPoco) {
         const po = reg.poco;
         const fundo = !isNaN(profPoco) ? profPoco : profMax;
@@ -5094,28 +5152,28 @@
         const topoPre = !isNaN(lPre) ? Math.max(0, fundo - lPre) : topoFiltro;
 
         let segs = "";
-        // Pré-filtro (anular) — desenhado atrás, ocupando toda a largura
+        // Pré-filtro (espaço anular): ocupa a faixa inteira, atrás do tubo
         if (!isNaN(lPre) && lPre > 0) {
           segs += `<div class="pp-w-seg pp-w-prefiltro" style="top:${mm(
             yDe(topoPre)
           )};height:${mm(yDe(fundo) - yDe(topoPre))};"></div>`;
         }
-        // Tubo liso (da boca ao topo do filtro)
+        // Tubo liso (da boca ao topo do filtro), centrado na faixa
         if (topoFiltro > 0) {
           segs += `<div class="pp-w-seg pp-w-tubo" style="top:0;height:${mm(
             yDe(topoFiltro)
-          )};left:25%;right:25%;"></div>`;
+          )};left:28%;right:28%;"></div>`;
         }
-        // Filtro (seção ranhurada)
+        // Filtro (seção ranhurada), centrado na faixa
         if (!isNaN(lFiltro) && lFiltro > 0) {
           segs += `<div class="pp-w-seg pp-w-filtro" style="top:${mm(
             yDe(topoFiltro)
-          )};height:${mm(yDe(fundo) - yDe(topoFiltro))};left:25%;right:25%;"></div>`;
+          )};height:${mm(yDe(fundo) - yDe(topoFiltro))};left:28%;right:28%;"></div>`;
         }
         // Tampão de fundo
         segs += `<div class="pp-w-seg pp-w-fundo" style="top:${mm(
           yDe(fundo)
-        )};height:0.8mm;left:25%;right:25%;"></div>`;
+        )};height:0.8mm;left:28%;right:28%;"></div>`;
 
         // Níveis d'água do poço
         const naI = num(po.naInst);
@@ -5139,7 +5197,7 @@
             )}</div>`;
         }
 
-        wellHtml = `<div class="pp-well" style="left:${mm(larguraCol)};width:14mm;">${segs}</div>`;
+        wellHtml = `<div class="pp-well" style="width:${mm(larguraPoco)};">${segs}</div>`;
 
         legendaHtml = `
           <div class="pp-legend">
@@ -5152,7 +5210,7 @@
           </div>`;
       }
 
-      const larguraWrap = temPoco ? larguraCol + 14 : larguraCol;
+      const larguraWrap = larguraCol;
 
       // ----- Tabela de camadas (fonte adaptativa ao número de linhas) -----
       const fonteTab =
@@ -5234,11 +5292,6 @@
           `Recuperação média: ${recMedia}</td></tr>`;
       }
 
-      const agora = new Date();
-      const geradoEm =
-        String(agora.getDate()).padStart(2, "0") + "/" +
-        String(agora.getMonth() + 1).padStart(2, "0") + "/" +
-        agora.getFullYear();
 
       // ================= PÁGINA 1: o perfil, sempre em uma folha =================
       const pagina1 = `
@@ -5286,11 +5339,6 @@
             </div>
           </div>
 
-          <div class="pp-sign">
-            <div>Responsável técnico</div>
-            <div>Empresa de sondagem</div>
-          </div>
-          <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
         </div>
       `;
 
@@ -5332,7 +5380,6 @@
               <thead><tr>${cabec}</tr></thead>
               <tbody>${cels}</tbody>
             </table>
-            <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
           </div>
         `);
       }
@@ -5365,7 +5412,6 @@
               <thead><tr>${cabec}</tr></thead>
               <tbody>${cels}</tbody>
             </table>
-            <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
           </div>
         `);
       }
@@ -5394,7 +5440,6 @@
                 )} · ${esc(reg.idSond || "")}</div>
               </div>
               <div class="pp-fotos">${itens.join("")}</div>
-              <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
             </div>
           `);
         }
@@ -5405,11 +5450,6 @@
 
     function montarHTMLDiario(reg) {
       const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "—";
-      const agora = new Date();
-      const geradoEm =
-        String(agora.getDate()).padStart(2, "0") + "/" +
-        String(agora.getMonth() + 1).padStart(2, "0") + "/" +
-        agora.getFullYear();
 
       // Atividades: cada linha "07h00: ..." vira uma linha da tabela cronológica
       const linhasAtiv = (reg.atividades || "")
@@ -5483,11 +5523,6 @@
           ${ativHtml}
           ${obsHtml}
 
-          <div class="pp-sign">
-            <div>Responsável técnico</div>
-            <div>Cliente / Fiscalização</div>
-          </div>
-          <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
         </div>
       `;
     }
