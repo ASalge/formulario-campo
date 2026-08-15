@@ -607,7 +607,7 @@
     @media print {
       @page {
         size: A4 portrait;
-        margin: 12mm;
+        margin: 10mm;
       }
       body {
         background: #ffffff;
@@ -621,45 +621,60 @@
         display: block !important;
       }
     }
+    /* ---------- Documento A4: 190 x 277 mm de área útil ---------- */
     .pp-page {
-      font-size: 12px;
+      font-size: 11px;
       color: #111111;
+      width: 100%;
+      /* Cada documento ocupa no máximo uma página; nada transborda */
+      page-break-inside: avoid;
+      break-inside: avoid;
+      page-break-after: always;
+      break-after: page;
     }
-    /* Em exportação múltipla, cada documento começa em nova página */
-    .pp-page + .pp-page {
+    .pp-page:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+    /* Páginas de continuação (anexos) começam sempre em folha nova */
+    .pp-cont {
       page-break-before: always;
+      break-before: page;
     }
     .pp-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid #111;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
+      padding-bottom: 5px;
+      margin-bottom: 6px;
       gap: 10px;
     }
     .pp-head img {
-      height: 34px;
+      height: 11mm;
       width: auto;
     }
     .pp-title {
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       text-align: right;
-      line-height: 1.3;
+      line-height: 1.25;
     }
     .pp-info {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
     .pp-info td {
       border: 1px solid #999;
-      padding: 4px 6px;
-      font-size: 11.5px;
+      padding: 2px 5px;
+      font-size: 10px;
+      line-height: 1.25;
     }
     .pp-info td strong {
-      font-size: 10px;
+      font-size: 8.5px;
       color: #555;
       display: block;
       text-transform: uppercase;
@@ -667,20 +682,20 @@
     }
     .pp-body {
       display: flex;
-      gap: 14px;
+      gap: 10px;
       align-items: flex-start;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
     .pp-colwrap {
-      width: 175px;
       flex: none;
-      padding-top: 6px;
+      padding-top: 4px;
     }
     .pp-col {
       position: relative;
       border: 1px solid #111;
-      height: 620px;
-      margin-left: 36px;
       background: #fdfdfb;
+      margin-left: 9mm;
     }
     .pp-band {
       position: absolute;
@@ -691,32 +706,101 @@
       print-color-adjust: exact;
     }
     .pp-band .pp-band-n {
-      font-size: 9px;
-      padding: 0 3px;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 3px;
+      font-size: 7.5px;
+      padding: 0 2px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 2px;
       position: absolute;
-      top: 2px;
-      left: 2px;
+      top: 1px;
+      left: 1px;
     }
     .pp-tick {
       position: absolute;
-      left: -36px;
-      width: 32px;
+      left: -9mm;
+      width: 8mm;
       text-align: right;
-      font-size: 9.5px;
+      font-size: 7.5px;
       color: #333;
     }
     .pp-na {
       position: absolute;
       left: 0;
       right: 0;
-      border-top: 2px dashed #1d4ed8;
+      border-top: 1.5px dashed #1d4ed8;
       color: #1d4ed8;
-      font-size: 9.5px;
+      font-size: 7.5px;
       text-align: right;
-      padding: 1px 3px 0 0;
+      padding: 0 2px 0 0;
       font-weight: 600;
+    }
+    /* ---------- Desenho do poço de monitoramento ---------- */
+    .pp-well {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-left: 1px solid #111;
+      background: #ffffff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .pp-w-seg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    /* Pré-filtro: areia/pedrisco (pontilhado) ocupando a largura do anular */
+    .pp-w-prefiltro {
+      background-color: #efe6cf;
+      background-image: radial-gradient(#9c8b62 0.6px, transparent 0.7px);
+      background-size: 3px 3px;
+      border: 1px solid #9c8b62;
+    }
+    /* Tubo liso: duas paredes verticais */
+    .pp-w-tubo {
+      background: #ffffff;
+      border-left: 1.4px solid #111;
+      border-right: 1.4px solid #111;
+    }
+    /* Filtro: tubo ranhurado (hachura horizontal) */
+    .pp-w-filtro {
+      background-color: #ffffff;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        #111 0 0.7px,
+        transparent 0.7px 2.6px
+      );
+      border-left: 1.4px solid #111;
+      border-right: 1.4px solid #111;
+    }
+    /* Tampão de fundo */
+    .pp-w-fundo {
+      background: #111;
+    }
+    .pp-w-na {
+      position: absolute;
+      font-size: 7px;
+      font-weight: 700;
+      color: #1d4ed8;
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .pp-legend {
+      font-size: 7.5px;
+      color: #333;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+    .pp-legend i {
+      display: inline-block;
+      width: 9px;
+      height: 7px;
+      border: 1px solid #111;
+      vertical-align: -1px;
+      margin-right: 2px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .pp-table {
       flex: 1;
@@ -726,63 +810,75 @@
     .pp-table th,
     .pp-table td {
       border: 1px solid #999;
-      padding: 4px 6px;
-      font-size: 10.5px;
+      padding: 2px 4px;
+      font-size: 9px;
       vertical-align: top;
       text-align: left;
+      line-height: 1.3;
     }
     .pp-table tr {
       page-break-inside: avoid;
-    }
-    .pp-sign {
-      page-break-inside: avoid;
-    }
-    .pp-fotos {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .pp-foto {
-      page-break-inside: avoid;
-      border: 1px solid #999;
-      padding: 4px;
-    }
-    .pp-foto img {
-      width: 100%;
-      max-height: 78mm;
-      object-fit: contain;
-      display: block;
-    }
-    .pp-foto div {
-      font-size: 10px;
-      text-align: center;
-      padding-top: 3px;
+      break-inside: avoid;
     }
     .pp-table th {
       background: #efefef;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
+    /* Tabela densa para anexos (VOC, liners) */
+    .pp-table-dense th,
+    .pp-table-dense td {
+      padding: 1px 3px;
+      font-size: 7.8px;
+      text-align: center;
+      line-height: 1.25;
+    }
+    .pp-fotos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .pp-foto {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      border: 1px solid #999;
+      padding: 3px;
+    }
+    .pp-foto img {
+      width: 100%;
+      max-height: 72mm;
+      object-fit: contain;
+      display: block;
+    }
+    .pp-foto div {
+      font-size: 9px;
+      text-align: center;
+      padding-top: 2px;
+    }
     .pp-section-label {
-      font-size: 11.5px;
+      font-size: 10px;
       font-weight: 700;
-      margin: 12px 0 4px 0;
+      margin: 6px 0 3px 0;
+      page-break-after: avoid;
+      break-after: avoid;
     }
     .pp-sign {
       display: flex;
-      gap: 40px;
-      margin-top: 38px;
+      gap: 30px;
+      margin-top: 8mm;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
     .pp-sign div {
       flex: 1;
       border-top: 1px solid #111;
       text-align: center;
-      padding-top: 4px;
-      font-size: 10.5px;
+      padding-top: 3px;
+      font-size: 9px;
     }
     .pp-footer {
-      margin-top: 10px;
-      font-size: 9px;
+      margin-top: 4px;
+      font-size: 8px;
       color: #777;
       text-align: right;
     }
@@ -1231,24 +1327,36 @@
             <input type="text" id="poco-id" placeholder="Ex.: PM-01" />
             <div class="row">
               <div>
-                <label for="poco-filtro">Filtro (m)</label>
-                <input type="number" step="0.01" inputmode="decimal" id="poco-filtro" />
+                <label for="poco-prof">Profundidade do poço (m)</label>
+                <input type="number" step="0.01" inputmode="decimal" id="poco-prof"
+                       placeholder="Se vazio, usa a prof. final" />
               </div>
               <div>
-                <label for="poco-prefiltro">Pré-filtro (m)</label>
-                <input type="number" step="0.01" inputmode="decimal" id="poco-prefiltro" />
+                <label for="poco-filtro">Filtro — comprimento (m)</label>
+                <input type="number" step="0.01" inputmode="decimal" id="poco-filtro" />
               </div>
             </div>
             <div class="row">
               <div>
+                <label for="poco-prefiltro">Pré-filtro — comprimento (m)</label>
+                <input type="number" step="0.01" inputmode="decimal" id="poco-prefiltro" />
+              </div>
+              <div>
                 <label for="poco-na-inst">NA na instalação (m)</label>
                 <input type="number" step="0.01" inputmode="decimal" id="poco-na-inst" />
               </div>
+            </div>
+            <div class="row">
               <div>
                 <label for="poco-na-estab">NA estabilizado (m)</label>
                 <input type="number" step="0.01" inputmode="decimal" id="poco-na-estab" />
               </div>
+              <div></div>
             </div>
+            <p class="small-muted" style="margin-top:-4px;">
+              No desenho do perfil, filtro e pré-filtro são posicionados a partir
+              do fundo do poço (convenção usual de instalação).
+            </p>
           </div>
 
           <label for="sond-obs">
@@ -1314,11 +1422,72 @@
             </button>
           </div>
 
+          <div class="section-title" style="margin-top: 14px;">Amostragem com liner</div>
+          <div class="inline-checkbox">
+            <input type="checkbox" id="sond-liner" onchange="alternarLiner()" />
+            <label for="sond-liner">Amostragem com liner?</label>
+          </div>
+
+          <div id="campos-liner" class="hidden">
+            <div class="row">
+              <div>
+                <label for="liner-tamanho">Tamanho do liner (cm)</label>
+                <input type="number" step="1" inputmode="decimal" id="liner-tamanho"
+                       placeholder="Ex.: 60" />
+              </div>
+              <div>
+                <label for="liner-inicio">Início do linerado (m)</label>
+                <input type="number" step="0.01" inputmode="decimal" id="liner-inicio"
+                       placeholder="Ex.: 0,60" />
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="liner-fim">Fim do linerado (m)</label>
+                <input type="number" step="0.01" inputmode="decimal" id="liner-fim"
+                       placeholder="Ex.: 12,00" />
+              </div>
+              <div style="display:flex; align-items:flex-end;">
+                <button type="button" class="btn-primary btn-small"
+                        style="width:100%; margin-bottom:14px;"
+                        onclick="gerarListaLiners()">
+                  ⚡ Gerar lista de liners
+                </button>
+              </div>
+            </div>
+
+            <div id="bulk-bar-liner" class="bulk-bar hidden">
+              <span class="bulk-count" id="bulk-count-liner">0 selecionados</span>
+              <button type="button" class="btn-danger btn-small" onclick="excluirLinersSelecionados()">
+                Excluir
+              </button>
+              <button type="button" class="btn-secondary btn-small" onclick="limparSelecaoLiner()">
+                Limpar
+              </button>
+            </div>
+
+            <div id="container-liners"></div>
+
+            <button type="button" class="btn-secondary btn-small" onclick="adicionarLiner()">
+              + Adicionar liner
+            </button>
+          </div>
+
           <div class="section-title" style="margin-top: 14px;">Medições de VOC</div>
           <p class="small-muted" style="margin-top: 0;">
             Registre as medições de VOC. Use "Gerar série" para criar as
             profundidades automaticamente no intervalo que você definir.
           </p>
+
+          <div id="bulk-bar-voc" class="bulk-bar hidden">
+            <span class="bulk-count" id="bulk-count-voc">0 selecionadas</span>
+            <button type="button" class="btn-danger btn-small" onclick="excluirVOCsSelecionadas()">
+              Excluir
+            </button>
+            <button type="button" class="btn-secondary btn-small" onclick="limparSelecaoVOC()">
+              Limpar
+            </button>
+          </div>
 
           <div id="container-voc"></div>
 
@@ -1336,6 +1505,13 @@
               onclick="gerarSerieVOC()"
             >
               ⚡ Gerar série
+            </button>
+            <button
+              type="button"
+              class="btn-secondary btn-small"
+              onclick="selecionarTodasVOC()"
+            >
+              ☑ Selecionar todas
             </button>
           </div>
 
@@ -2441,19 +2617,21 @@
       const idx = index;
       return `
         <div class="voc-card" data-voc-index="${idx}">
-          <div class="row">
-            <div>
+          <div style="display:flex; gap:8px; align-items:flex-end;">
+            <input type="checkbox" class="voc-sel" aria-label="Selecionar medição"
+                   onchange="atualizarBulkBarVOC()"
+                   style="width:24px; height:24px; min-height:0; flex:none; margin-bottom:16px; accent-color:#2563eb;" />
+            <div style="flex:1;">
               <label>Profundidade (m)</label>
               <input type="number" step="0.01" inputmode="decimal" class="voc-prof" placeholder="Ex.: 1,20" />
             </div>
-            <div>
+            <div style="flex:1;">
               <label>VOC (ppm)</label>
               <input type="number" step="0.01" inputmode="decimal" class="voc-valor" placeholder="Ex.: 0,3" />
             </div>
-          </div>
-          <div style="text-align:right; margin-top:4px;">
-            <button type="button" class="btn-danger btn-small" onclick="removerVOC(this)">
-              Remover medição
+            <button type="button" class="btn-danger btn-small" onclick="removerVOC(this)"
+                    style="flex:none; margin-bottom:14px;">
+              ✕
             </button>
           </div>
         </div>
@@ -2471,6 +2649,259 @@
     function removerVOC(btn) {
       const card = btn.closest(".voc-card");
       if (card) card.remove();
+      atualizarBulkBarVOC();
+    }
+
+    // --- Seleção múltipla de medições de VOC ---
+    function atualizarBulkBarVOC() {
+      const bar = document.getElementById("bulk-bar-voc");
+      const cnt = document.getElementById("bulk-count-voc");
+      if (!bar) return;
+      const n = document.querySelectorAll("#container-voc .voc-sel:checked").length;
+      if (n > 0) {
+        bar.classList.remove("hidden");
+        cnt.textContent = n + (n === 1 ? " selecionada" : " selecionadas");
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+
+    function selecionarTodasVOC() {
+      const chks = document.querySelectorAll("#container-voc .voc-sel");
+      const todasMarcadas =
+        chks.length > 0 &&
+        [...chks].every((c) => c.checked);
+      chks.forEach((c) => {
+        c.checked = !todasMarcadas;
+      });
+      atualizarBulkBarVOC();
+    }
+
+    function limparSelecaoVOC() {
+      document
+        .querySelectorAll("#container-voc .voc-sel")
+        .forEach((c) => (c.checked = false));
+      atualizarBulkBarVOC();
+    }
+
+    function excluirVOCsSelecionadas() {
+      const sels = [...document.querySelectorAll("#container-voc .voc-sel:checked")];
+      if (!sels.length) return;
+      if (!confirm("Excluir " + sels.length + " medição(ões) de VOC?")) return;
+      sels.forEach((c) => {
+        const card = c.closest(".voc-card");
+        if (card) card.remove();
+      });
+      if (!document.querySelectorAll("#container-voc .voc-card").length) {
+        adicionarVOC();
+      }
+      atualizarBulkBarVOC();
+      mostrarToast(sels.length + " medição(ões) excluída(s) ✓");
+    }
+
+    // ===================== AMOSTRAGEM COM LINER =====================
+
+    function alternarLiner() {
+      const chk = document.getElementById("sond-liner");
+      const campos = document.getElementById("campos-liner");
+      if (chk.checked) {
+        campos.classList.remove("hidden");
+        if (!document.querySelectorAll("#container-liners .liner-card").length) {
+          const tam = document.getElementById("liner-tamanho");
+          if (!tam.value) tam.value = "60";
+          tam.focus();
+        }
+      } else {
+        campos.classList.add("hidden");
+      }
+    }
+
+    function linerTemplate(n, de, ate, tamanhoCm) {
+      const rot = "L" + String(n).padStart(2, "0");
+      return `
+        <div class="liner-card" data-tamanho="${tamanhoCm || ""}">
+          <div style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+            <input type="checkbox" class="liner-sel" aria-label="Selecionar liner"
+                   onchange="atualizarBulkBarLiner()"
+                   style="width:24px; height:24px; min-height:0; flex:none; margin-bottom:16px; accent-color:#2563eb;" />
+            <div style="flex:1.1; min-width:118px;">
+              <label>Liner / intervalo (m)</label>
+              <div style="display:flex; gap:4px; align-items:center;">
+                <span class="tag" style="margin:0 0 14px 0; font-weight:700;">${rot}</span>
+                <input type="number" step="0.01" inputmode="decimal" class="liner-de" value="${de}" />
+                <input type="number" step="0.01" inputmode="decimal" class="liner-ate" value="${ate}" />
+              </div>
+            </div>
+            <div style="flex:1; min-width:110px;">
+              <label>Recuperação (cm)</label>
+              <input type="number" step="1" inputmode="decimal" class="liner-rec"
+                     oninput="atualizarPctLiner(this)" />
+            </div>
+            <div style="flex:none; min-width:52px;">
+              <label>&nbsp;</label>
+              <div class="liner-pct small-muted" style="margin-bottom:16px; font-weight:600;">—</div>
+            </div>
+            <button type="button" class="btn-danger btn-small" onclick="removerLiner(this)"
+                    style="flex:none; margin-bottom:14px;">✕</button>
+          </div>
+          <input type="text" class="liner-obs" placeholder="Observações do liner (opcional)" />
+        </div>
+      `;
+    }
+
+    function atualizarPctLiner(input) {
+      const card = input.closest(".liner-card");
+      const tam = num(card.getAttribute("data-tamanho"));
+      const rec = num(input.value);
+      const el = card.querySelector(".liner-pct");
+      if (isNaN(tam) || tam <= 0 || isNaN(rec)) {
+        el.textContent = "—";
+        el.style.color = "";
+        return;
+      }
+      const pct = Math.round((rec / tam) * 100);
+      el.textContent = pct + "%";
+      el.style.color = pct >= 70 ? "#15803d" : pct >= 40 ? "#b45309" : "#b91c1c";
+    }
+
+    function adicionarLiner() {
+      const cont = document.getElementById("container-liners");
+      const tamCm = document.getElementById("liner-tamanho").value.trim();
+      const passo = num(tamCm) / 100;
+      const cards = cont.querySelectorAll(".liner-card");
+      let de = num(document.getElementById("liner-inicio").value);
+      if (cards.length) {
+        const ult = num(cards[cards.length - 1].querySelector(".liner-ate").value);
+        if (!isNaN(ult)) de = ult;
+      }
+      if (isNaN(de)) de = 0;
+      const ate = !isNaN(passo) && passo > 0 ? Math.round((de + passo) * 100) / 100 : "";
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = linerTemplate(
+        cards.length + 1,
+        de.toFixed ? de.toFixed(2) : de,
+        ate === "" ? "" : ate.toFixed(2),
+        tamCm
+      );
+      cont.appendChild(wrapper.firstElementChild);
+      atualizarBulkBarLiner();
+    }
+
+    function removerLiner(btn) {
+      const card = btn.closest(".liner-card");
+      if (card) card.remove();
+      renumerarLiners();
+      atualizarBulkBarLiner();
+    }
+
+    function renumerarLiners() {
+      document
+        .querySelectorAll("#container-liners .liner-card")
+        .forEach((card, i) => {
+          const tag = card.querySelector(".tag");
+          if (tag) tag.textContent = "L" + String(i + 1).padStart(2, "0");
+        });
+    }
+
+    function gerarListaLiners() {
+      const tamCm = num(document.getElementById("liner-tamanho").value);
+      const inicio = num(document.getElementById("liner-inicio").value);
+      const fim = num(document.getElementById("liner-fim").value);
+
+      if (isNaN(tamCm) || tamCm <= 0) {
+        alert("Informe o tamanho do liner em centímetros.");
+        return;
+      }
+      if (isNaN(inicio) || isNaN(fim) || fim <= inicio) {
+        alert("Informe o início e o fim do trecho amostrado com liner.");
+        return;
+      }
+      const passo = tamCm / 100;
+      const qtd = Math.ceil((fim - inicio) / passo - 0.0001);
+      if (qtd > 200) {
+        alert("Isso geraria " + qtd + " liners. Verifique os valores informados.");
+        return;
+      }
+      const cont = document.getElementById("container-liners");
+      const existentes = cont.querySelectorAll(".liner-card");
+      const temDados = [...existentes].some(
+        (c) => c.querySelector(".liner-rec").value || c.querySelector(".liner-obs").value
+      );
+      if (
+        temDados &&
+        !confirm(
+          "Já existem liners preenchidos. Gerar a lista vai substituí-los. Continuar?"
+        )
+      ) {
+        return;
+      }
+      cont.innerHTML = "";
+      let n = 1;
+      for (let p = inicio; p < fim - 0.0001; p = Math.round((p + passo) * 1000) / 1000) {
+        const ate = Math.min(Math.round((p + passo) * 1000) / 1000, fim);
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = linerTemplate(n, p.toFixed(2), ate.toFixed(2), tamCm);
+        cont.appendChild(wrapper.firstElementChild);
+        n++;
+      }
+      atualizarBulkBarLiner();
+      mostrarToast(qtd + " liners gerados ✓");
+    }
+
+    function atualizarBulkBarLiner() {
+      const bar = document.getElementById("bulk-bar-liner");
+      const cnt = document.getElementById("bulk-count-liner");
+      if (!bar) return;
+      const n = document.querySelectorAll("#container-liners .liner-sel:checked").length;
+      if (n > 0) {
+        bar.classList.remove("hidden");
+        cnt.textContent = n + (n === 1 ? " selecionado" : " selecionados");
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+
+    function limparSelecaoLiner() {
+      document
+        .querySelectorAll("#container-liners .liner-sel")
+        .forEach((c) => (c.checked = false));
+      atualizarBulkBarLiner();
+    }
+
+    function excluirLinersSelecionados() {
+      const sels = [...document.querySelectorAll("#container-liners .liner-sel:checked")];
+      if (!sels.length) return;
+      if (!confirm("Excluir " + sels.length + " liner(s)?")) return;
+      sels.forEach((c) => {
+        const card = c.closest(".liner-card");
+        if (card) card.remove();
+      });
+      renumerarLiners();
+      atualizarBulkBarLiner();
+      mostrarToast(sels.length + " liner(s) excluído(s) ✓");
+    }
+
+    function coletarLiners() {
+      const out = [];
+      document
+        .querySelectorAll("#container-liners .liner-card")
+        .forEach((card, i) => {
+          const de = card.querySelector(".liner-de").value.trim();
+          const ate = card.querySelector(".liner-ate").value.trim();
+          const rec = card.querySelector(".liner-rec").value.trim();
+          const obs = card.querySelector(".liner-obs").value.trim();
+          if (de || ate || rec || obs) {
+            out.push({
+              n: i + 1,
+              de: de,
+              ate: ate,
+              recuperacao: rec,
+              tamanho: card.getAttribute("data-tamanho") || "",
+              obs: obs,
+            });
+          }
+        });
+      return out;
     }
 
     function gerarSerieVOC() {
@@ -2685,10 +3116,19 @@
         poco: document.getElementById("sond-poco").checked
           ? {
               id: document.getElementById("poco-id").value.trim(),
+              prof: document.getElementById("poco-prof").value.trim(),
               filtro: document.getElementById("poco-filtro").value.trim(),
               prefiltro: document.getElementById("poco-prefiltro").value.trim(),
               naInst: document.getElementById("poco-na-inst").value.trim(),
               naEstab: document.getElementById("poco-na-estab").value.trim(),
+            }
+          : null,
+        liner: document.getElementById("sond-liner").checked
+          ? {
+              tamanho: document.getElementById("liner-tamanho").value.trim(),
+              inicio: document.getElementById("liner-inicio").value.trim(),
+              fim: document.getElementById("liner-fim").value.trim(),
+              amostras: coletarLiners(),
             }
           : null,
         camadas,
@@ -2737,6 +3177,10 @@
       document.getElementById("sond-gps-info").textContent = "";
       document.getElementById("sond-projetoid").value = "";
       document.getElementById("campos-poco").classList.add("hidden");
+      document.getElementById("campos-liner").classList.add("hidden");
+      document.getElementById("container-liners").innerHTML = "";
+      atualizarBulkBarLiner();
+      atualizarBulkBarVOC();
       limparFotos();
       preencherDatasHoje();
       document.getElementById("container-camadas").innerHTML = "";
@@ -2781,6 +3225,7 @@
       if (reg.poco) {
         camposPoco.classList.remove("hidden");
         document.getElementById("poco-id").value = reg.poco.id || "";
+        document.getElementById("poco-prof").value = reg.poco.prof || "";
         document.getElementById("poco-filtro").value = reg.poco.filtro || "";
         document.getElementById("poco-prefiltro").value = reg.poco.prefiltro || "";
         document.getElementById("poco-na-inst").value = reg.poco.naInst || "";
@@ -2788,6 +3233,36 @@
       } else {
         camposPoco.classList.add("hidden");
       }
+
+      // Amostragem com liner
+      const chkLiner = document.getElementById("sond-liner");
+      const camposLiner = document.getElementById("campos-liner");
+      const contLiners = document.getElementById("container-liners");
+      contLiners.innerHTML = "";
+      chkLiner.checked = !!reg.liner;
+      if (reg.liner) {
+        camposLiner.classList.remove("hidden");
+        document.getElementById("liner-tamanho").value = reg.liner.tamanho || "";
+        document.getElementById("liner-inicio").value = reg.liner.inicio || "";
+        document.getElementById("liner-fim").value = reg.liner.fim || "";
+        (reg.liner.amostras || []).forEach((a, i) => {
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = linerTemplate(
+            i + 1,
+            a.de || "",
+            a.ate || "",
+            a.tamanho || reg.liner.tamanho || ""
+          );
+          const card = wrapper.firstElementChild;
+          contLiners.appendChild(card);
+          card.querySelector(".liner-rec").value = a.recuperacao || "";
+          card.querySelector(".liner-obs").value = a.obs || "";
+          atualizarPctLiner(card.querySelector(".liner-rec"));
+        });
+      } else {
+        camposLiner.classList.add("hidden");
+      }
+      atualizarBulkBarLiner();
 
       // Fotos
       limparFotos();
@@ -2930,7 +3405,7 @@
       const header = [
         "projeto","empresa","local","lat","lon","idSond","data",
         "profFinal","nivelAgua","pocoId","filtro","preFiltro",
-        "naInstalacao","naEstabilizado","obs","camadas","vocs"
+        "naInstalacao","naEstabilizado","liners","obs","camadas","vocs"
       ];
       const linhas = [header.join(";")];
 
@@ -2994,6 +3469,16 @@
           preFiltro: reg.poco ? reg.poco.prefiltro || "" : "",
           naInstalacao: reg.poco ? reg.poco.naInst || "" : "",
           naEstabilizado: reg.poco ? reg.poco.naEstab || "" : "",
+          liners: reg.liner
+            ? (reg.liner.amostras || [])
+                .map(
+                  (a) =>
+                    "L" + String(a.n).padStart(2, "0") + " [" + (a.de || "?") +
+                    "-" + (a.ate || "?") + "m] rec: " + (a.recuperacao || "?") + "cm" +
+                    (a.obs ? " (" + a.obs + ")" : "")
+                )
+                .join(" | ")
+            : "",
           obs: reg.obs || "",
           camadas: camadasStr,
           vocs: vocStr,
@@ -4543,77 +5028,168 @@
           if (isNaN(db)) return -1;
           return da - db;
         });
+
       const profsAte = camadas.map((c) => num(c.profAte)).filter((v) => !isNaN(v));
       let profMax = num(reg.profFinal);
       if (isNaN(profMax)) profMax = 0;
       if (profsAte.length) profMax = Math.max(profMax, Math.max.apply(null, profsAte));
+      const temPoco = !!reg.poco;
+      const profPoco = temPoco
+        ? (!isNaN(num(reg.poco.prof)) ? num(reg.poco.prof) : profMax)
+        : NaN;
+      if (!isNaN(profPoco)) profMax = Math.max(profMax, profPoco);
       if (!profMax || profMax <= 0) profMax = 1;
 
-      const H = 620;
+      // Altura da coluna em mm: fixa, para o perfil caber sempre em uma página
+      // independentemente da profundidade (a escala é que muda).
+      const H = 165; // mm
+      const mm = (v) => v.toFixed(2) + "mm";
+      const yDe = (p) => (p / profMax) * H; // profundidade (m) -> mm
 
-      // Bandas da coluna gráfica
+      // ----- Coluna litológica -----
       let bands = "";
       camadas.forEach((c, i) => {
         const de = num(c.profDe);
         const ate = num(c.profAte);
         if (isNaN(de) || isNaN(ate) || ate <= de) return;
-        const top = (de / profMax) * H;
-        const h = ((ate - de) / profMax) * H;
+        const top = yDe(de);
+        const h = yDe(ate) - yDe(de);
         const cor = COR_HEX[c.cor] || "#d8d4cc";
-        const rotulo = h >= 13 ? `<span class="pp-band-n">${i + 1}</span>` : "";
+        const rotulo = h >= 4 ? `<span class="pp-band-n">${i + 1}</span>` : "";
         bands +=
-          `<div class="pp-band" style="top:${top.toFixed(1)}px;height:${h.toFixed(1)}px;background:${cor};">` +
+          `<div class="pp-band" style="top:${mm(top)};height:${mm(h)};background:${cor};">` +
           rotulo +
           `</div>`;
       });
 
-      // Régua de profundidade
-      const passo = profMax > 15 ? 2 : 1;
+      // ----- Régua de profundidade (passo adaptativo: 8 a 16 marcas) -----
+      const passosPossiveis = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50];
+      let passo = passosPossiveis.find((p) => profMax / p <= 14) || 100;
       let ticks = "";
-      for (let m = 0; m <= profMax + 0.001; m += passo) {
-        ticks += `<div class="pp-tick" style="top:${((m / profMax) * H - 6).toFixed(1)}px;">${m} —</div>`;
+      for (let m = 0; m <= profMax + 0.0001; m = Math.round((m + passo) * 100) / 100) {
+        ticks += `<div class="pp-tick" style="top:${mm(yDe(m) - 1.3)};">${
+          Number.isInteger(m) ? m : m.toFixed(1)
+        } —</div>`;
       }
 
-      // Nível d'água
+      // ----- Nível d'água do furo -----
       const na = num(reg.nivelAgua);
       let naHtml = "";
       if (!isNaN(na) && na >= 0 && na <= profMax) {
-        naHtml = `<div class="pp-na" style="top:${((na / profMax) * H).toFixed(1)}px;">▽ NA ${esc(reg.nivelAgua)} m</div>`;
+        naHtml = `<div class="pp-na" style="top:${mm(yDe(na))};">▽ NA ${esc(
+          reg.nivelAgua
+        )} m</div>`;
       }
 
-      // Tabela de camadas
+      // ----- Desenho do poço de monitoramento -----
+      let wellHtml = "";
+      let legendaHtml = "";
+      const larguraCol = temPoco ? 26 : 34; // mm
+      if (temPoco) {
+        const po = reg.poco;
+        const fundo = !isNaN(profPoco) ? profPoco : profMax;
+        const lFiltro = num(po.filtro);
+        const lPre = num(po.prefiltro);
+        const topoFiltro = !isNaN(lFiltro) ? Math.max(0, fundo - lFiltro) : fundo;
+        const topoPre = !isNaN(lPre) ? Math.max(0, fundo - lPre) : topoFiltro;
+
+        let segs = "";
+        // Pré-filtro (anular) — desenhado atrás, ocupando toda a largura
+        if (!isNaN(lPre) && lPre > 0) {
+          segs += `<div class="pp-w-seg pp-w-prefiltro" style="top:${mm(
+            yDe(topoPre)
+          )};height:${mm(yDe(fundo) - yDe(topoPre))};"></div>`;
+        }
+        // Tubo liso (da boca ao topo do filtro)
+        if (topoFiltro > 0) {
+          segs += `<div class="pp-w-seg pp-w-tubo" style="top:0;height:${mm(
+            yDe(topoFiltro)
+          )};left:25%;right:25%;"></div>`;
+        }
+        // Filtro (seção ranhurada)
+        if (!isNaN(lFiltro) && lFiltro > 0) {
+          segs += `<div class="pp-w-seg pp-w-filtro" style="top:${mm(
+            yDe(topoFiltro)
+          )};height:${mm(yDe(fundo) - yDe(topoFiltro))};left:25%;right:25%;"></div>`;
+        }
+        // Tampão de fundo
+        segs += `<div class="pp-w-seg pp-w-fundo" style="top:${mm(
+          yDe(fundo)
+        )};height:0.8mm;left:25%;right:25%;"></div>`;
+
+        // Níveis d'água do poço
+        const naI = num(po.naInst);
+        const naE = num(po.naEstab);
+        if (!isNaN(naI) && naI >= 0 && naI <= profMax) {
+          segs +=
+            `<div class="pp-w-seg" style="top:${mm(
+              yDe(naI)
+            )};border-top:1.2px dashed #1d4ed8;"></div>` +
+            `<div class="pp-w-na" style="top:${mm(yDe(naI) + 0.3)};left:1px;">▽ ${esc(
+              po.naInst
+            )}</div>`;
+        }
+        if (!isNaN(naE) && naE >= 0 && naE <= profMax) {
+          segs +=
+            `<div class="pp-w-seg" style="top:${mm(
+              yDe(naE)
+            )};border-top:1.6px solid #1d4ed8;"></div>` +
+            `<div class="pp-w-na" style="top:${mm(yDe(naE) + 0.3)};left:1px;">▼ ${esc(
+              po.naEstab
+            )}</div>`;
+        }
+
+        wellHtml = `<div class="pp-well" style="left:${mm(larguraCol)};width:14mm;">${segs}</div>`;
+
+        legendaHtml = `
+          <div class="pp-legend">
+            <div><i class="pp-w-filtro"></i>Filtro ${esc(po.filtro || "—")} m &nbsp;
+                 <i class="pp-w-prefiltro"></i>Pré-filtro ${esc(po.prefiltro || "—")} m</div>
+            <div><i class="pp-w-tubo"></i>Tubo liso &nbsp; ▽ NA instalação ${esc(
+              po.naInst || "—"
+            )} m &nbsp; ▼ NA estabilizado ${esc(po.naEstab || "—")} m</div>
+            <div>Fundo do poço: ${esc(String(fundo))} m</div>
+          </div>`;
+      }
+
+      const larguraWrap = temPoco ? larguraCol + 14 : larguraCol;
+
+      // ----- Tabela de camadas (fonte adaptativa ao número de linhas) -----
+      const fonteTab =
+        camadas.length > 22 ? 7.2 : camadas.length > 15 ? 8 : camadas.length > 10 ? 8.5 : 9;
       const rows = camadas
         .map(
           (c, i) =>
             `<tr><td style="text-align:center;">${i + 1}</td>` +
-            `<td style="white-space:nowrap;">${esc(c.profDe || "?")} – ${esc(c.profAte || "?")}</td>` +
+            `<td style="white-space:nowrap;">${esc(c.profDe || "?")} – ${esc(
+              c.profAte || "?"
+            )}</td>` +
             `<td>${esc(montarDescricaoCamada(c))}</td>` +
             `<td>${c.houveAmostra ? esc(c.intervaloAmostra || "Sim") : "–"}</td></tr>`
         )
         .join("");
 
-      // Tabela de VOC
-      const vocs = reg.vocs || [];
-      let vocHtml = "";
-      if (vocs.length) {
-        const perRow = 4;
-        let trs = "";
-        for (let i = 0; i < vocs.length; i += perRow) {
-          trs +=
-            "<tr>" +
-            vocs
-              .slice(i, i + perRow)
-              .map(
-                (v) =>
-                  `<td>${esc(v.profundidade || "?")} m</td><td><strong>${esc(v.valor || "?")}</strong> ppm</td>`
-              )
-              .join("") +
-            "</tr>";
-        }
-        vocHtml =
-          `<div class="pp-section-label">Medições de VOC (PID)</div>` +
-          `<table class="pp-table">${trs}</table>`;
-      }
+      const tabelaCamadas = `
+        <table class="pp-table" style="font-size:${fonteTab}px;">
+          <thead>
+            <tr>
+              <th style="width:5mm;">#</th>
+              <th style="width:17mm;">Prof. (m)</th>
+              <th>Descrição</th>
+              <th style="width:18mm;">Amostra</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows || '<tr><td colspan="4">Nenhuma camada descrita.</td></tr>'}
+          </tbody>
+        </table>`;
+
+      const obsHtml = reg.obs
+        ? `<div class="pp-section-label">Observações gerais / Instalação</div>` +
+          `<div style="font-size:9px; border:1px solid #999; padding:3px 5px;">${esc(
+            reg.obs
+          )}</div>`
+        : "";
 
       const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "—";
 
@@ -4622,84 +5198,50 @@
         const u = latLonParaUTM(num(reg.lat), num(reg.lon));
         coordRow =
           `<tr><td colspan="3"><strong>Coordenadas (SIRGAS 2000 / UTM ${u.zone}${u.hemi})</strong>` +
-          `E ${fmt0(u.e)} m · N ${fmt0(u.n)} m &nbsp;·&nbsp; Lat/Lon: ${esc(reg.lat)}, ${esc(reg.lon)}</td></tr>`;
+          `E ${fmt0(u.e)} m · N ${fmt0(u.n)} m &nbsp;·&nbsp; Lat/Lon: ${esc(
+            reg.lat
+          )}, ${esc(reg.lon)}</td></tr>`;
       }
 
       let pocoRow = "";
-      if (reg.poco) {
+      if (temPoco) {
         const po = reg.poco;
         pocoRow =
           `<tr><td colspan="3"><strong>Poço de monitoramento ${esc(po.id || "")}</strong>` +
-          `Filtro: ${esc(po.filtro || "—")} m · Pré-filtro: ${esc(po.prefiltro || "—")} m · ` +
-          `NA na instalação: ${esc(po.naInst || "—")} m · NA estabilizado: ${esc(po.naEstab || "—")} m</td></tr>`;
+          `Prof.: ${esc(po.prof || String(profPoco))} m · Filtro: ${esc(
+            po.filtro || "—"
+          )} m · Pré-filtro: ${esc(po.prefiltro || "—")} m · ` +
+          `NA instalação: ${esc(po.naInst || "—")} m · NA estabilizado: ${esc(
+            po.naEstab || "—"
+          )} m</td></tr>`;
       }
 
-      // Anexo fotográfico
-      let fotosHtml = "";
-      if (reg.fotos && reg.fotos.length) {
-        const itens = [];
-        for (const ref of reg.fotos) {
-          const f = await idbGet("fotos", ref.id);
-          if (f && f.blob) {
-            const dataUrl = await blobParaDataURL(f.blob);
-            itens.push(
-              `<div class="pp-foto"><img src="${dataUrl}" /><div>${esc(ref.legenda || "")}</div></div>`
-            );
-          }
+      let linerRow = "";
+      const liners = (reg.liner && reg.liner.amostras) || [];
+      if (reg.liner) {
+        const comRec = liners.filter((a) => a.recuperacao !== "" && a.recuperacao != null);
+        let recMedia = "—";
+        const tamCm = num(reg.liner.tamanho);
+        if (comRec.length && !isNaN(tamCm) && tamCm > 0) {
+          const soma = comRec.reduce((acc, a) => acc + (num(a.recuperacao) || 0), 0);
+          recMedia = Math.round((soma / comRec.length / tamCm) * 100) + "%";
         }
-        if (itens.length) {
-          fotosHtml =
-            `<div class="pp-section-label" style="page-break-before:always;">Registro fotográfico — ${esc(reg.idSond || "")}</div>` +
-            `<div class="pp-fotos">${itens.join("")}</div>`;
-        }
+        linerRow =
+          `<tr><td colspan="3"><strong>Amostragem com liner</strong>` +
+          `Liner de ${esc(reg.liner.tamanho || "—")} cm · Trecho ${esc(
+            reg.liner.inicio || "—"
+          )} – ${esc(reg.liner.fim || "—")} m · ${liners.length} liners · ` +
+          `Recuperação média: ${recMedia}</td></tr>`;
       }
 
       const agora = new Date();
       const geradoEm =
-        String(agora.getDate()).padStart(2, "0") +
-        "/" +
-        String(agora.getMonth() + 1).padStart(2, "0") +
-        "/" +
+        String(agora.getDate()).padStart(2, "0") + "/" +
+        String(agora.getMonth() + 1).padStart(2, "0") + "/" +
         agora.getFullYear();
 
-      const tabelaCamadas = `
-              <table class="pp-table">
-                <thead>
-                  <tr>
-                    <th style="width:18px;">#</th>
-                    <th style="width:70px;">Prof. (m)</th>
-                    <th>Descrição</th>
-                    <th style="width:80px;">Amostra</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${rows || '<tr><td colspan="4">Nenhuma camada descrita.</td></tr>'}
-                </tbody>
-              </table>`;
-
-      const obsHtml = reg.obs
-        ? `<div class="pp-section-label">Observações gerais / Instalação</div><div style="font-size:10.5px; border:1px solid #999; padding:5px 6px;">${esc(reg.obs)}</div>`
-        : "";
-
-      const colunaHtml = `
-              <div class="pp-col">
-                ${bands}
-                ${ticks}
-                ${naHtml}
-              </div>`;
-
-      // Perfis longos: coluna gráfica em cima e tabela em largura total,
-      // para a paginação da impressão fluir naturalmente
-      const empilhado = camadas.length > 12;
-      const corpoHtml = empilhado
-        ? `<div class="pp-colwrap" style="margin-bottom:14px;">${colunaHtml}</div>
-           <div>${tabelaCamadas}${vocHtml}${obsHtml}</div>`
-        : `<div class="pp-body">
-            <div class="pp-colwrap">${colunaHtml}</div>
-            <div style="flex:1;">${tabelaCamadas}${vocHtml}${obsHtml}</div>
-          </div>`;
-
-      return `
+      // ================= PÁGINA 1: o perfil, sempre em uma folha =================
+      const pagina1 = `
         <div class="pp-page">
           <div class="pp-head">
             <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
@@ -4719,22 +5261,146 @@
             <tr>
               <td><strong>Local</strong>${esc(reg.local || "—")}</td>
               <td><strong>Empresa de sondagem</strong>${esc(reg.empresa || "—")}</td>
-              <td><strong>Prof. final / NA</strong>${esc(reg.profFinal || "—")} m / ${esc(reg.nivelAgua || "—")} m</td>
+              <td><strong>Prof. final / NA</strong>${esc(
+                reg.profFinal || "—"
+              )} m / ${esc(reg.nivelAgua || "—")} m</td>
             </tr>
             ${pocoRow}
+            ${linerRow}
             ${coordRow}
           </table>
 
-          ${corpoHtml}
+          <div class="pp-body">
+            <div class="pp-colwrap" style="width:${mm(larguraWrap)};">
+              <div class="pp-col" style="height:${mm(H)};width:${mm(larguraWrap)};">
+                ${bands}
+                ${wellHtml}
+                ${ticks}
+                ${naHtml}
+              </div>
+              ${legendaHtml}
+            </div>
+            <div style="flex:1; min-width:0;">
+              ${tabelaCamadas}
+              ${obsHtml}
+            </div>
+          </div>
 
           <div class="pp-sign">
             <div>Responsável técnico</div>
             <div>Empresa de sondagem</div>
           </div>
           <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
-          ${fotosHtml}
         </div>
       `;
+
+      // ============ ANEXOS: liners, VOC e fotos (folhas próprias) ============
+      const anexos = [];
+
+      // -- Anexo: controle de recuperação dos liners --
+      if (liners.length) {
+        const tamCm = num(reg.liner.tamanho);
+        const porLinha = liners.length > 40 ? 4 : liners.length > 20 ? 3 : 2;
+        let cels = "";
+        liners.forEach((a, i) => {
+          if (i % porLinha === 0) cels += "<tr>";
+          const rec = num(a.recuperacao);
+          const pct =
+            !isNaN(rec) && !isNaN(tamCm) && tamCm > 0
+              ? Math.round((rec / tamCm) * 100) + "%"
+              : "—";
+          cels +=
+            `<td><strong>L${String(a.n).padStart(2, "0")}</strong></td>` +
+            `<td>${esc(a.de || "?")}–${esc(a.ate || "?")}</td>` +
+            `<td>${esc(a.recuperacao || "—")}</td>` +
+            `<td>${pct}</td>`;
+          if (i % porLinha === porLinha - 1 || i === liners.length - 1) cels += "</tr>";
+        });
+        let cabec = "";
+        for (let k = 0; k < porLinha; k++) {
+          cabec += `<th>Liner</th><th>Prof. (m)</th><th>Rec. (cm)</th><th>%</th>`;
+        }
+        anexos.push(`
+          <div class="pp-page pp-cont">
+            <div class="pp-head">
+              <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+              <div class="pp-title">RECUPERAÇÃO DOS LINERS<br>${esc(
+                reg.projeto || ""
+              )} · ${esc(reg.idSond || "")}</div>
+            </div>
+            <table class="pp-table pp-table-dense">
+              <thead><tr>${cabec}</tr></thead>
+              <tbody>${cels}</tbody>
+            </table>
+            <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
+          </div>
+        `);
+      }
+
+      // -- Anexo: medições de VOC (tabela densa, colunas adaptativas) --
+      const vocs = reg.vocs || [];
+      if (vocs.length) {
+        const porLinha = vocs.length > 120 ? 8 : vocs.length > 60 ? 6 : 4;
+        let cels = "";
+        vocs.forEach((v, i) => {
+          if (i % porLinha === 0) cels += "<tr>";
+          cels +=
+            `<td>${esc(v.profundidade || "?")}</td>` +
+            `<td><strong>${esc(v.valor || "?")}</strong></td>`;
+          if (i % porLinha === porLinha - 1 || i === vocs.length - 1) cels += "</tr>";
+        });
+        let cabec = "";
+        for (let k = 0; k < porLinha; k++) {
+          cabec += `<th>Prof. (m)</th><th>ppm</th>`;
+        }
+        anexos.push(`
+          <div class="pp-page pp-cont">
+            <div class="pp-head">
+              <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+              <div class="pp-title">MEDIÇÕES DE VOC (PID)<br>${esc(
+                reg.projeto || ""
+              )} · ${esc(reg.idSond || "")}</div>
+            </div>
+            <table class="pp-table pp-table-dense">
+              <thead><tr>${cabec}</tr></thead>
+              <tbody>${cels}</tbody>
+            </table>
+            <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
+          </div>
+        `);
+      }
+
+      // -- Anexo: registro fotográfico --
+      if (reg.fotos && reg.fotos.length) {
+        const itens = [];
+        for (const ref of reg.fotos) {
+          const f = await idbGet("fotos", ref.id);
+          if (f && f.blob) {
+            const dataUrl = await blobParaDataURL(f.blob);
+            itens.push(
+              `<div class="pp-foto"><img src="${dataUrl}" /><div>${esc(
+                ref.legenda || ""
+              )}</div></div>`
+            );
+          }
+        }
+        if (itens.length) {
+          anexos.push(`
+            <div class="pp-page pp-cont">
+              <div class="pp-head">
+                <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+                <div class="pp-title">REGISTRO FOTOGRÁFICO<br>${esc(
+                  reg.projeto || ""
+                )} · ${esc(reg.idSond || "")}</div>
+              </div>
+              <div class="pp-fotos">${itens.join("")}</div>
+              <div class="pp-footer">Gerado em ${geradoEm} · Formulários de Campo</div>
+            </div>
+          `);
+        }
+      }
+
+      return pagina1 + anexos.join("");
     }
 
     function montarHTMLDiario(reg) {
@@ -4750,6 +5416,18 @@
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l.length);
+      // Fonte adaptativa: diários longos encolhem para caber na folha
+      const totalTexto =
+        (reg.atividades || "").length + (reg.observacoes || "").length;
+      const fonte =
+        linhasAtiv.length > 26 || totalTexto > 2400
+          ? 7.4
+          : linhasAtiv.length > 18 || totalTexto > 1500
+          ? 8.2
+          : linhasAtiv.length > 10 || totalTexto > 800
+          ? 9
+          : 10;
+
       let ativHtml;
       if (linhasAtiv.length) {
         const temHora = linhasAtiv.every((l) => /^\d{1,2}h[0-5]\d\b/.test(l));
@@ -4759,22 +5437,22 @@
               const m = l.match(/^(\d{1,2}h[0-5]\d)\s*[:\-–]?\s*(.*)$/);
               const hora = m ? m[1] : "";
               const txt = m ? m[2] : l;
-              return `<tr><td style="width:70px; white-space:nowrap;">${esc(hora)}</td><td>${esc(txt)}</td></tr>`;
+              return `<tr><td style="width:16mm; white-space:nowrap;">${esc(hora)}</td><td>${esc(txt)}</td></tr>`;
             })
             .join("");
           ativHtml =
-            `<table class="pp-table"><thead><tr><th style="width:70px;">Hora</th><th>Atividade</th></tr></thead><tbody>${trs}</tbody></table>`;
+            `<table class="pp-table" style="font-size:${fonte}px;"><thead><tr><th style="width:16mm;">Hora</th><th>Atividade</th></tr></thead><tbody>${trs}</tbody></table>`;
         } else {
           ativHtml =
-            `<div style="font-size:11px; border:1px solid #999; padding:6px 8px; white-space:pre-line;">${esc(reg.atividades)}</div>`;
+            `<div style="font-size:${fonte}px; border:1px solid #999; padding:4px 6px; white-space:pre-line;">${esc(reg.atividades)}</div>`;
         }
       } else {
         ativHtml =
-          `<div style="font-size:11px; color:#777;">Sem atividades registradas.</div>`;
+          `<div style="font-size:10px; color:#777;">Sem atividades registradas.</div>`;
       }
 
       const obsHtml = reg.observacoes
-        ? `<div class="pp-section-label">Observações</div><div style="font-size:11px; border:1px solid #999; padding:6px 8px; white-space:pre-line;">${esc(reg.observacoes)}</div>`
+        ? `<div class="pp-section-label">Observações</div><div style="font-size:${fonte}px; border:1px solid #999; padding:4px 6px; white-space:pre-line;">${esc(reg.observacoes)}</div>`
         : "";
 
       return `
