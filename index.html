@@ -719,14 +719,16 @@
       gap: 10px;
     }
     .pp-head img {
-      height: 11mm;
+      height: 12mm;
       width: auto;
+      order: 2; /* logo sempre no canto superior direito */
     }
     .pp-title {
       font-size: 13px;
       font-weight: 700;
-      text-align: right;
+      text-align: left;
       line-height: 1.25;
+      order: 1;
     }
     .pp-info {
       width: 100%;
@@ -867,8 +869,10 @@
     .pp-legend {
       font-size: 7.5px;
       color: #333;
-      margin-top: 3px;
-      line-height: 1.5;
+      margin-top: 5mm;
+      padding-top: 2mm;
+      border-top: 0.5px solid #bbb;
+      line-height: 1.65;
     }
     .pp-legend i {
       display: inline-block;
@@ -5141,8 +5145,9 @@
       let wellHtml = "";
       let legendaHtml = "";
       // Coluna litológica única; o poço é desenhado sobreposto a ela.
-      const larguraCol = 38; // mm
-      const larguraPoco = 13; // mm (faixa central do poço)
+      const larguraCol = 28; // mm (largura da faixa litológica)
+      const larguraPoco = 11; // mm (faixa central do poço, sobreposta)
+      const espacoRegua = 9; // mm reservados à esquerda para a régua
       if (temPoco) {
         const po = reg.poco;
         const fundo = !isNaN(profPoco) ? profPoco : profMax;
@@ -5210,7 +5215,9 @@
           </div>`;
       }
 
-      const larguraWrap = larguraCol;
+      // O contêiner precisa somar a régua + a coluna, senão a coluna
+      // transborda para a direita e invade a tabela de litologia.
+      const larguraWrap = larguraCol + espacoRegua;
 
       // ----- Tabela de camadas (fonte adaptativa ao número de linhas) -----
       const fonteTab =
@@ -5293,55 +5300,6 @@
       }
 
 
-      // ================= PÁGINA 1: o perfil, sempre em uma folha =================
-      const pagina1 = `
-        <div class="pp-page">
-          <div class="pp-head">
-            <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
-            <div class="pp-title">
-              PERFIL DE SONDAGEM /<br>POÇO DE MONITORAMENTO
-            </div>
-          </div>
-
-          <table class="pp-info">
-            <tr>
-              <td><strong>Projeto</strong>${esc(reg.projeto || "—")}</td>
-              <td><strong>ID Sondagem / Poço</strong>${esc(reg.idSond || "—")}${
-                reg.poco && reg.poco.id ? " / " + esc(reg.poco.id) : ""
-              }</td>
-              <td><strong>Data</strong>${esc(dataFmt)}</td>
-            </tr>
-            <tr>
-              <td><strong>Local</strong>${esc(reg.local || "—")}</td>
-              <td><strong>Empresa de sondagem</strong>${esc(reg.empresa || "—")}</td>
-              <td><strong>Prof. final / NA</strong>${esc(
-                reg.profFinal || "—"
-              )} m / ${esc(reg.nivelAgua || "—")} m</td>
-            </tr>
-            ${pocoRow}
-            ${linerRow}
-            ${coordRow}
-          </table>
-
-          <div class="pp-body">
-            <div class="pp-colwrap" style="width:${mm(larguraWrap)};">
-              <div class="pp-col" style="height:${mm(H)};width:${mm(larguraWrap)};">
-                ${bands}
-                ${wellHtml}
-                ${ticks}
-                ${naHtml}
-              </div>
-              ${legendaHtml}
-            </div>
-            <div style="flex:1; min-width:0;">
-              ${tabelaCamadas}
-              ${obsHtml}
-            </div>
-          </div>
-
-        </div>
-      `;
-
       // ============ ANEXOS: liners, VOC e fotos (folhas próprias) ============
       const anexos = [];
 
@@ -5384,37 +5342,122 @@
         `);
       }
 
-      // -- Anexo: medições de VOC (tabela densa, colunas adaptativas) --
+      // -- Medições de VOC: cabem na própria página do perfil? --
+      // Orçamento vertical (A4 útil 277mm): cabeçalho ~16 + identificação
+      // (5,2mm/linha) + coluna 148 + legenda. O que sobrar abaixo do corpo
+      // recebe a tabela; só vai para anexo se realmente não couber.
       const vocs = reg.vocs || [];
+      let vocInlineHtml = "";
       if (vocs.length) {
-        const porLinha = vocs.length > 120 ? 8 : vocs.length > 60 ? 6 : 4;
-        let cels = "";
-        vocs.forEach((v, i) => {
-          if (i % porLinha === 0) cels += "<tr>";
-          cels +=
-            `<td>${esc(v.profundidade || "?")}</td>` +
-            `<td><strong>${esc(v.valor || "?")}</strong></td>`;
-          if (i % porLinha === porLinha - 1 || i === vocs.length - 1) cels += "</tr>";
+        const nInfo = 2 + (pocoRow ? 1 : 0) + (linerRow ? 1 : 0) + (coordRow ? 1 : 0);
+        const alturaLivre =
+          277 - 16 - (nInfo * 5.2 + 2) - (H + (temPoco ? 12 : 3)) - 6;
+
+        // Altura de linha da tabela densa, em mm, para uma dada fonte em px
+        const alturaLinha = (f) => f * 1.25 * 0.2646 + 0.79;
+
+        // Combinações da mais legível para a mais compacta
+        const combos = [
+          { por: 4, fonte: 8 },
+          { por: 5, fonte: 7.5 },
+          { por: 6, fonte: 7 },
+          { por: 8, fonte: 7 },
+          { por: 10, fonte: 6.5 },
+          { por: 12, fonte: 6.2 },
+        ];
+        const escolha = combos.find((c) => {
+          const linhas = Math.ceil(vocs.length / c.por) + 1; // + cabeçalho
+          return linhas * alturaLinha(c.fonte) <= alturaLivre;
         });
-        let cabec = "";
-        for (let k = 0; k < porLinha; k++) {
-          cabec += `<th>Prof. (m)</th><th>ppm</th>`;
-        }
-        anexos.push(`
-          <div class="pp-page pp-cont">
-            <div class="pp-head">
-              <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
-              <div class="pp-title">MEDIÇÕES DE VOC (PID)<br>${esc(
-                reg.projeto || ""
-              )} · ${esc(reg.idSond || "")}</div>
+
+        const montarTabelaVOC = (por, fonte) => {
+          let cels = "";
+          vocs.forEach((v, i) => {
+            if (i % por === 0) cels += "<tr>";
+            cels +=
+              `<td>${esc(v.profundidade || "?")}</td>` +
+              `<td><strong>${esc(v.valor || "?")}</strong></td>`;
+            if (i % por === por - 1 || i === vocs.length - 1) cels += "</tr>";
+          });
+          let cabec = "";
+          for (let k = 0; k < por; k++) cabec += `<th>Prof. (m)</th><th>ppm</th>`;
+          return (
+            `<table class="pp-table pp-table-dense" style="font-size:${fonte}px;">` +
+            `<thead><tr>${cabec}</tr></thead><tbody>${cels}</tbody></table>`
+          );
+        };
+
+        if (escolha) {
+          // Cabe na página do perfil, logo abaixo do corpo
+          vocInlineHtml =
+            `<div class="pp-section-label">Medições de VOC (PID)</div>` +
+            montarTabelaVOC(escolha.por, escolha.fonte);
+        } else {
+          // Volume grande demais: anexo em folha própria
+          anexos.push(`
+            <div class="pp-page pp-cont">
+              <div class="pp-head">
+                <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+                <div class="pp-title">MEDIÇÕES DE VOC (PID)<br>${esc(
+                  reg.projeto || ""
+                )} · ${esc(reg.idSond || "")}</div>
+              </div>
+              ${montarTabelaVOC(12, 6.2)}
             </div>
-            <table class="pp-table pp-table-dense">
-              <thead><tr>${cabec}</tr></thead>
-              <tbody>${cels}</tbody>
-            </table>
-          </div>
-        `);
+          `);
+        }
       }
+
+      // ================= PÁGINA 1: o perfil, sempre em uma folha =================
+      const pagina1 = `
+        <div class="pp-page">
+          <div class="pp-head">
+            <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+            <div class="pp-title">
+              PERFIL DE SONDAGEM /<br>POÇO DE MONITORAMENTO
+            </div>
+          </div>
+
+          <table class="pp-info">
+            <tr>
+              <td><strong>Projeto</strong>${esc(reg.projeto || "—")}</td>
+              <td><strong>ID Sondagem / Poço</strong>${esc(reg.idSond || "—")}${
+                reg.poco && reg.poco.id ? " / " + esc(reg.poco.id) : ""
+              }</td>
+              <td><strong>Data</strong>${esc(dataFmt)}</td>
+            </tr>
+            <tr>
+              <td><strong>Local</strong>${esc(reg.local || "—")}</td>
+              <td><strong>Empresa de sondagem</strong>${esc(reg.empresa || "—")}</td>
+              <td><strong>Prof. final / NA</strong>${esc(
+                reg.profFinal || "—"
+              )} m / ${esc(reg.nivelAgua || "—")} m</td>
+            </tr>
+            ${pocoRow}
+            ${linerRow}
+            ${coordRow}
+          </table>
+
+          <div class="pp-body">
+            <div class="pp-colwrap" style="width:${mm(larguraWrap)};">
+              <div class="pp-col" style="height:${mm(H)};width:${mm(larguraCol)};">
+                ${bands}
+                ${wellHtml}
+                ${ticks}
+                ${naHtml}
+              </div>
+              ${legendaHtml}
+            </div>
+            <div style="flex:1; min-width:0;">
+              ${tabelaCamadas}
+              ${obsHtml}
+            </div>
+          </div>
+
+          ${vocInlineHtml}
+
+        </div>
+      `;
 
       // -- Anexo: registro fotográfico --
       if (reg.fotos && reg.fotos.length) {
