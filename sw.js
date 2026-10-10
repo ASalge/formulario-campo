@@ -2,13 +2,15 @@
 // Estratégia: responde do cache na hora (app abre offline) e atualiza o
 // cache em segundo plano quando houver internet (stale-while-revalidate).
 
-const CACHE = "formularios-campo-v2";
+const CACHE = "formularios-campo-v3";
 const ARQUIVOS = [
   "./",
   "./index.html",
   "./LogoColorido.svg",
   "./icon-192.png",
   "./manifest.json",
+  "./vendor/html2canvas.min.js",
+  "./vendor/jspdf.umd.min.js",
 ];
 
 self.addEventListener("install", (event) => {

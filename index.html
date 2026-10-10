@@ -915,6 +915,9 @@
       width: 100%;
       max-width: 100%;
     }
+    .pp-table-dense td {
+      white-space: nowrap;
+    }
     .pp-table-dense th,
     .pp-table-dense td {
       padding: 1px 3px;
@@ -1653,19 +1656,24 @@
     </div>
   </div>
 
-  <!-- Diálogo de exportação (a impressão parte de um toque direto) -->
+  <!-- Diálogo de exportação: o próprio app gera o arquivo PDF -->
   <div id="export-overlay" class="wizard-overlay hidden">
     <div class="wizard-box">
-      <div class="wizard-title">Documento pronto</div>
+      <div class="wizard-title" id="export-titulo">Gerando PDF…</div>
       <p class="wizard-help" id="export-info"></p>
-      <button type="button" class="btn-primary" style="width:100%; margin-bottom:10px;"
-              onclick="exportarImprimir()">🖨 Imprimir / Salvar PDF</button>
-      <button type="button" class="btn-secondary" style="width:100%; margin-bottom:10px;"
-              onclick="exportarNovaAba()">↗ Abrir em nova aba</button>
-      <p class="small-muted" style="margin-top:0;">
-        Se a tela de impressão não abrir, use "Abrir em nova aba" e, nela,
-        o botão de compartilhar → Imprimir (ou Salvar em Arquivos).
-      </p>
+      <div id="export-acoes" class="hidden">
+        <button type="button" id="btn-pdf-compartilhar" class="btn-primary"
+                style="width:100%; margin-bottom:10px;" onclick="compartilharPDF()">
+          📤 Salvar / Compartilhar PDF
+        </button>
+        <button type="button" class="btn-secondary" style="width:100%; margin-bottom:10px;"
+                onclick="baixarPDF()">⬇ Baixar PDF</button>
+        <p class="small-muted" style="margin-top:0;">
+          No iPhone, "Salvar / Compartilhar" abre o menu do sistema:
+          escolha "Salvar em Arquivos", AirDrop, WhatsApp ou e-mail.
+          <a href="#" onclick="exportarImprimir(); return false;">Imprimir pelo navegador</a>
+        </p>
+      </div>
       <button type="button" class="btn-secondary" style="width:100%;"
               onclick="fecharExportacao()">Fechar</button>
     </div>
@@ -5419,7 +5427,7 @@
         // soma-se o padding (3px de cada lado) e a borda de cada célula.
         // O fator 1.06 é a margem de segurança contra o transbordo lateral.
         const larguraPar = (f) =>
-          ((9 * 0.52 * f + 7) + (3 * 0.52 * f + 7)) * px2mm * 1.06;
+          ((6 * 0.6 * f + 7) / 0.58) * px2mm * 1.08;
 
         const montarTabelaVOC = (por, fonte) => {
           let cels = "";
@@ -5431,9 +5439,16 @@
             if (i % por === por - 1 || i === vocs.length - 1) cels += "</tr>";
           });
           let cabec = "";
-          for (let k = 0; k < por; k++) cabec += `<th>Prof. (m)</th><th>ppm</th>`;
+          let cols = "";
+          for (let k = 0; k < por; k++) {
+            cabec += `<th>Prof. (m)</th><th style="white-space:nowrap;">ppm</th>`;
+            cols +=
+              `<col style="width:${(58 / por).toFixed(3)}%">` +
+              `<col style="width:${(42 / por).toFixed(3)}%">`;
+          }
           return (
             `<table class="pp-table pp-table-dense" style="font-size:${fonte}px;">` +
+            `<colgroup>${cols}</colgroup>` +
             `<thead><tr>${cabec}</tr></thead><tbody>${cels}</tbody></table>`
           );
         };
@@ -5771,64 +5786,168 @@
       return partes.join("_");
     }
 
-    // Exportação em duas etapas: o documento é montado e um diálogo pede
-    // um toque para imprimir. O Safari só abre a impressão de forma confiável
-    // quando window.print() é chamado diretamente pelo toque do usuário —
-    // não depois de esperar o carregamento de fotos do banco.
+    // Exportação: o app gera o arquivo PDF por conta própria (html2canvas +
+    // jsPDF, bibliotecas locais, funcionam offline) e o entrega pelo menu de
+    // compartilhar do sistema. Não depende da impressão do navegador, que o
+    // Safari no iPhone deixou de executar a partir do app.
     let exportNome = "";
+    let pdfPronto = null;
 
-    function imprimirComNome(nome) {
+    function carregarScript(src) {
+      return new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.onload = () => res();
+        s.onerror = () => rej(new Error("não foi possível carregar " + src +
+          " (abra o app uma vez com internet para baixá-lo)"));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function carregarLibsPDF() {
+      if (!window.html2canvas) await carregarScript("vendor/html2canvas.min.js");
+      if (!(window.jspdf && window.jspdf.jsPDF)) await carregarScript("vendor/jspdf.umd.min.js");
+    }
+
+    async function gerarArquivoPDF(nome, aoProgredir) {
+      await carregarLibsPDF();
+      const { jsPDF } = window.jspdf;
+      // Palco fora da tela, com a largura útil de uma folha A4 (190 mm)
+      const palco = document.createElement("div");
+      palco.id = "pdf-palco";
+      palco.style.cssText =
+        "position:absolute;left:-30000px;top:0;width:190mm;background:#fff;";
+      palco.innerHTML = document.getElementById("print-area").innerHTML;
+      document.body.appendChild(palco);
+      try {
+        await Promise.all(
+          [...palco.querySelectorAll("img")].map((img) =>
+            img.complete ? null : new Promise((r) => { img.onload = img.onerror = r; })
+          )
+        );
+        const paginas = [...palco.querySelectorAll(".pp-page")];
+        const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
+        for (let i = 0; i < paginas.length; i++) {
+          if (aoProgredir) aoProgredir(i + 1, paginas.length);
+          const pg = paginas[i];
+          pg.style.overflow = "visible";
+          const canvas = await window.html2canvas(pg, {
+            scale: 2.5,
+            backgroundColor: "#ffffff",
+            logging: false,
+            useCORS: true,
+          });
+          // Ajusta à área útil da A4 (190 x 277 mm), sem distorcer
+          let w = 190;
+          let h = (canvas.height * w) / canvas.width;
+          if (h > 277) {
+            h = 277;
+            w = (canvas.width * h) / canvas.height;
+          }
+          if (i > 0) pdf.addPage();
+          pdf.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", 10 + (190 - w) / 2, 10, w, h);
+          canvas.width = canvas.height = 0; // libera memória no celular
+        }
+        const blob = pdf.output("blob");
+        return new File([blob], nome + ".pdf", { type: "application/pdf" });
+      } finally {
+        palco.remove();
+      }
+    }
+
+    // Texturas do poço (filtro ranhurado e pré-filtro) como pequenas imagens
+    // repetidas: o gerador de PDF não desenha degradês CSS, mas desenha imagens.
+    function instalarTexturasPoco() {
+      try {
+        const ranhura = document.createElement("canvas");
+        ranhura.width = 8; ranhura.height = 10;
+        let c = ranhura.getContext("2d");
+        c.fillStyle = "#111"; c.fillRect(0, 0, 8, 3);
+        const pontos = document.createElement("canvas");
+        pontos.width = 10; pontos.height = 10;
+        c = pontos.getContext("2d");
+        c.fillStyle = "#6b5c34"; c.beginPath(); c.arc(5, 5, 2.4, 0, Math.PI * 2); c.fill();
+        const st = document.createElement("style");
+        st.id = "pp-texturas";
+        st.textContent =
+          ".pp-w-filtro{background-image:url(" + ranhura.toDataURL() + ")!important;" +
+          "background-size:4px 2.6px!important;background-repeat:repeat!important;}" +
+          ".pp-w-prefiltro{background-image:url(" + pontos.toDataURL() + ")!important;" +
+          "background-size:2.6px 2.6px!important;background-repeat:repeat!important;}";
+        document.head.appendChild(st);
+      } catch (e) {
+        // sem canvas (ambiente de teste): mantém as texturas em CSS
+      }
+    }
+
+    async function imprimirComNome(nome) {
       exportNome = nome;
-      const n = document.querySelectorAll("#print-area .pp-page").length;
-      document.getElementById("export-info").textContent =
-        nome + " · " + n + (n === 1 ? " página" : " páginas");
-      document.getElementById("export-overlay").classList.remove("hidden");
+      pdfPronto = null;
+      const ov = document.getElementById("export-overlay");
+      const tit = document.getElementById("export-titulo");
+      const info = document.getElementById("export-info");
+      const acoes = document.getElementById("export-acoes");
+      acoes.classList.add("hidden");
+      tit.textContent = "Gerando PDF…";
+      info.textContent = "Preparando…";
+      ov.classList.remove("hidden");
+      try {
+        pdfPronto = await gerarArquivoPDF(nome, (i, n) => {
+          info.textContent = "Página " + i + " de " + n + "…";
+        });
+        const n = document.querySelectorAll("#print-area .pp-page").length;
+        tit.textContent = "PDF pronto";
+        info.textContent = pdfPronto.name + " · " + n + (n === 1 ? " página" : " páginas");
+        const podeCompartilhar =
+          navigator.canShare && navigator.canShare({ files: [pdfPronto] });
+        document.getElementById("btn-pdf-compartilhar").classList.toggle("hidden", !podeCompartilhar);
+        acoes.classList.remove("hidden");
+      } catch (e) {
+        console.error(e);
+        tit.textContent = "Não foi possível gerar o PDF";
+        info.textContent = (e && e.message) || String(e);
+      }
+    }
+
+    // Disparados por toque direto (exigência do iPhone para o menu de compartilhar)
+    async function compartilharPDF() {
+      if (!pdfPronto) return;
+      try {
+        await navigator.share({ files: [pdfPronto], title: pdfPronto.name });
+      } catch (e) {
+        if (e && e.name === "AbortError") return; // usuário cancelou
+        baixarPDF();
+      }
+    }
+
+    function baixarPDF() {
+      if (!pdfPronto) return;
+      const url = URL.createObjectURL(pdfPronto);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = pdfPronto.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     }
 
     function fecharExportacao() {
       document.getElementById("export-overlay").classList.add("hidden");
     }
 
+    // Alternativa: impressão do navegador (funciona no computador)
     function exportarImprimir() {
       fecharExportacao();
       const original = document.title;
-      document.title = exportNome; // nome sugerido no "Salvar como PDF"
+      document.title = exportNome;
       const restaura = () => {
         document.title = original;
         window.removeEventListener("afterprint", restaura);
       };
       window.addEventListener("afterprint", restaura);
-      try {
-        window.print();
-      } catch (e) {
-        alert("Não foi possível abrir a impressão: " + e.message +
-          "\nUse a opção \"Abrir em nova aba\".");
-      }
+      try { window.print(); } catch (e) {}
       setTimeout(restaura, 1500);
-    }
-
-    // Plano B: o documento como página própria, aberta numa aba do Safari
-    function exportarNovaAba() {
-      const css = [...document.querySelectorAll("style")]
-        .map((st) => st.textContent).join("\n");
-      const base = location.href.replace(/[^/]*$/, "");
-      const doc =
-        "<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\">" +
-        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
-        "<base href=\"" + base + "\"><title>" + esc(exportNome) + "</title>" +
-        "<style>" + css + "</style>" +
-        "<style>body{background:#fff;padding:10mm;margin:0}" +
-        "#print-area{display:block!important}" +
-        "@media print{body{padding:0}}</style></head><body>" +
-        "<div id=\"print-area\">" +
-        document.getElementById("print-area").innerHTML +
-        "</div></body></html>";
-      const url = URL.createObjectURL(new Blob([doc], { type: "text/html" }));
-      const w = window.open(url, "_blank");
-      if (!w) {
-        alert("O navegador bloqueou a nova aba. Permita pop-ups para este site.");
-      }
-      fecharExportacao();
     }
 
     // Erros na montagem do documento aparecem na tela em vez de sumirem
@@ -5866,6 +5985,7 @@
       montarChipsEventos();
       atualizarHoraEvento();
       configurarNavegacaoVoltar();
+      instalarTexturasPoco();
       window.__pronto = true;
 
       // Service worker: deixa o app abrir 100% offline
