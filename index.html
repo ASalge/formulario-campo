@@ -1108,7 +1108,7 @@
         <div id="projdet-sts" class="st-grid"></div>
 
         <div class="btn-group" style="margin-top: 14px;">
-          <button type="button" class="btn-primary" onclick="exportarProjetoPDF()">
+          <button type="button" class="btn-primary" onclick="comAvisoDeErro(exportarProjetoPDF)">
             Exportar projeto em PDF
           </button>
           <button type="button" class="btn-secondary" onclick="abrirDiarioDoProjeto()">
@@ -1290,7 +1290,7 @@
         <div class="section-title">Registros salvos</div>
         <div id="bulk-bar-diario" class="bulk-bar hidden">
           <span class="bulk-count" id="bulk-count-diario">0 selecionados</span>
-          <button type="button" class="btn-primary btn-small" onclick="exportarBulkDiario()">
+          <button type="button" class="btn-primary btn-small" onclick="comAvisoDeErro(exportarBulkDiario)">
             Exportar PDF
           </button>
           <button type="button" class="btn-secondary btn-small" onclick="limparSelecaoDiario()">
@@ -1631,7 +1631,7 @@
         </p>
         <div id="bulk-bar-sondagem" class="bulk-bar hidden">
           <span class="bulk-count" id="bulk-count-sondagem">0 selecionados</span>
-          <button type="button" class="btn-primary btn-small" onclick="exportarBulkSondagem()">
+          <button type="button" class="btn-primary btn-small" onclick="comAvisoDeErro(exportarBulkSondagem)">
             Exportar PDF
           </button>
           <button type="button" class="btn-secondary btn-small" onclick="limparSelecaoSondagem()">
@@ -1650,6 +1650,24 @@
     <div class="wizard-box">
       <div class="wizard-progress" id="wizard-progress"></div>
       <div id="wizard-content"></div>
+    </div>
+  </div>
+
+  <!-- Diálogo de exportação (a impressão parte de um toque direto) -->
+  <div id="export-overlay" class="wizard-overlay hidden">
+    <div class="wizard-box">
+      <div class="wizard-title">Documento pronto</div>
+      <p class="wizard-help" id="export-info"></p>
+      <button type="button" class="btn-primary" style="width:100%; margin-bottom:10px;"
+              onclick="exportarImprimir()">🖨 Imprimir / Salvar PDF</button>
+      <button type="button" class="btn-secondary" style="width:100%; margin-bottom:10px;"
+              onclick="exportarNovaAba()">↗ Abrir em nova aba</button>
+      <p class="small-muted" style="margin-top:0;">
+        Se a tela de impressão não abrir, use "Abrir em nova aba" e, nela,
+        o botão de compartilhar → Imprimir (ou Salvar em Arquivos).
+      </p>
+      <button type="button" class="btn-secondary" style="width:100%;"
+              onclick="fecharExportacao()">Fechar</button>
     </div>
   </div>
 
@@ -2258,7 +2276,7 @@
                 : ""
             }
             <div style="margin-top:6px; text-align:right;">
-              <button type="button" class="btn-primary btn-small" onclick="gerarPerfilDiario(${reg.id})">
+              <button type="button" class="btn-primary btn-small" onclick="comAvisoDeErro(() => gerarPerfilDiario(${reg.id}))">
                 Diário (PDF)
               </button>
               <button type="button" class="btn-secondary btn-small" onclick="editarDiario(${reg.id})">
@@ -3451,7 +3469,7 @@
                 : ""
             }
             <div style="margin-top:6px; text-align:right;">
-              <button type="button" class="btn-primary btn-small" onclick="gerarPerfil(${reg.id})">
+              <button type="button" class="btn-primary btn-small" onclick="comAvisoDeErro(() => gerarPerfil(${reg.id}))">
                 Perfil (PDF)
               </button>
               <button type="button" class="btn-secondary btn-small" onclick="editarSondagem(${reg.id})">
@@ -5753,18 +5771,74 @@
       return partes.join("_");
     }
 
-    // Define o nome sugerido na tela "Salvar como PDF" via document.title
+    // Exportação em duas etapas: o documento é montado e um diálogo pede
+    // um toque para imprimir. O Safari só abre a impressão de forma confiável
+    // quando window.print() é chamado diretamente pelo toque do usuário —
+    // não depois de esperar o carregamento de fotos do banco.
+    let exportNome = "";
+
     function imprimirComNome(nome) {
+      exportNome = nome;
+      const n = document.querySelectorAll("#print-area .pp-page").length;
+      document.getElementById("export-info").textContent =
+        nome + " · " + n + (n === 1 ? " página" : " páginas");
+      document.getElementById("export-overlay").classList.remove("hidden");
+    }
+
+    function fecharExportacao() {
+      document.getElementById("export-overlay").classList.add("hidden");
+    }
+
+    function exportarImprimir() {
+      fecharExportacao();
       const original = document.title;
-      document.title = nome;
+      document.title = exportNome; // nome sugerido no "Salvar como PDF"
       const restaura = () => {
         document.title = original;
         window.removeEventListener("afterprint", restaura);
       };
       window.addEventListener("afterprint", restaura);
-      window.print();
-      // Fallback caso afterprint não dispare (alguns navegadores)
+      try {
+        window.print();
+      } catch (e) {
+        alert("Não foi possível abrir a impressão: " + e.message +
+          "\nUse a opção \"Abrir em nova aba\".");
+      }
       setTimeout(restaura, 1500);
+    }
+
+    // Plano B: o documento como página própria, aberta numa aba do Safari
+    function exportarNovaAba() {
+      const css = [...document.querySelectorAll("style")]
+        .map((st) => st.textContent).join("\n");
+      const base = location.href.replace(/[^/]*$/, "");
+      const doc =
+        "<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\">" +
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
+        "<base href=\"" + base + "\"><title>" + esc(exportNome) + "</title>" +
+        "<style>" + css + "</style>" +
+        "<style>body{background:#fff;padding:10mm;margin:0}" +
+        "#print-area{display:block!important}" +
+        "@media print{body{padding:0}}</style></head><body>" +
+        "<div id=\"print-area\">" +
+        document.getElementById("print-area").innerHTML +
+        "</div></body></html>";
+      const url = URL.createObjectURL(new Blob([doc], { type: "text/html" }));
+      const w = window.open(url, "_blank");
+      if (!w) {
+        alert("O navegador bloqueou a nova aba. Permita pop-ups para este site.");
+      }
+      fecharExportacao();
+    }
+
+    // Erros na montagem do documento aparecem na tela em vez de sumirem
+    async function comAvisoDeErro(fn) {
+      try {
+        await fn();
+      } catch (e) {
+        console.error(e);
+        alert("Erro ao gerar o PDF: " + (e && e.message ? e.message : e));
+      }
     }
 
     async function gerarPerfil(id) {

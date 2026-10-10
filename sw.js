@@ -2,7 +2,7 @@
 // Estratégia: responde do cache na hora (app abre offline) e atualiza o
 // cache em segundo plano quando houver internet (stale-while-revalidate).
 
-const CACHE = "formularios-campo-v1";
+const CACHE = "formularios-campo-v2";
 const ARQUIVOS = [
   "./",
   "./index.html",
