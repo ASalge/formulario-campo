@@ -72,6 +72,7 @@
     input[type="text"],
     input[type="number"],
     input[type="date"],
+    input[type="time"],
     textarea,
     select {
       width: 100%;
@@ -956,6 +957,209 @@
       page-break-after: avoid;
       break-after: avoid;
     }
+    /* ---------- Ensaio de permeabilidade (tela) ---------- */
+    .ens-timer {
+      background: #111827;
+      color: #f9fafb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .ens-timer-relogio {
+      font-size: 40px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+    }
+    .ens-timer-msg {
+      font-size: 14px;
+      color: #d1d5db;
+      margin-top: 4px;
+      min-height: 20px;
+    }
+    .ens-timer .btn-secondary {
+      background: #374151;
+      color: #f9fafb;
+    }
+    .ens-leit-cab,
+    .ens-row {
+      display: grid;
+      grid-template-columns: 64px 70px 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .ens-leit-cab {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4b5563;
+      padding: 0 8px 4px 8px;
+    }
+    .ens-row {
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 4px 8px;
+      margin-bottom: 6px;
+      transition: background 0.2s;
+    }
+    .ens-row .ens-t {
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .ens-row .ens-h {
+      font-size: 13px;
+      color: #4b5563;
+      font-variant-numeric: tabular-nums;
+    }
+    .ens-row input {
+      margin-bottom: 0;
+      text-align: center;
+      min-height: 44px;
+    }
+    .ens-row.proxima {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: inset 4px 0 0 #2563eb;
+    }
+    .ens-row.agora {
+      background: #fef3c7;
+      border-color: #d97706;
+    }
+    .ens-resultado {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .ens-k {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+    /* ---------- Ensaio de permeabilidade (PDF) ---------- */
+    .ens-corpo {
+      display: flex;
+      gap: 6mm;
+      align-items: flex-start;
+    }
+    .ens-col-tab {
+      width: 74mm;
+      flex: none;
+    }
+    .ens-col-res {
+      flex: 1;
+      min-width: 0;
+    }
+    .ens-tab th,
+    .ens-tab td {
+      text-align: center;
+      font-size: 8.6px;
+      padding: 1.5px 3px;
+      white-space: nowrap;
+    }
+    .ens-tab th {
+      white-space: normal;
+    }
+    .ens-res-box {
+      border: 1.5px solid #1d4ed8;
+      border-radius: 2mm;
+      padding: 2.5mm 3mm;
+      margin-bottom: 3mm;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .ens-res-k {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+    .ens-res-cls {
+      font-size: 10px;
+      font-weight: 600;
+      margin-top: 1mm;
+    }
+    .ens-res-num {
+      font-size: 8.5px;
+      color: #374151;
+      margin-top: 1mm;
+    }
+    .ens-grafico {
+      width: 100%;
+      display: block;
+      border: 1px solid #ddd;
+    }
+    .ens-graf-leg {
+      font-size: 7.5px;
+      color: #4b5563;
+      margin-top: 1mm;
+    }
+    .ens-memo {
+      font-size: 9.5px;
+      border: 1px solid #999;
+      padding: 2mm 3mm;
+      line-height: 1.6;
+    }
+    .ens-memo-res {
+      font-weight: 700;
+      font-size: 10.5px;
+    }
+    .ens-memo-leg {
+      font-size: 7.5px;
+      color: #555;
+      line-height: 1.4;
+      margin-top: 1mm;
+    }
+    .ens-regua {
+      margin-top: 4mm;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .ens-regua-esc {
+      position: relative;
+      height: 9mm;
+      border-bottom: 1px solid #111;
+      font-size: 7.5px;
+    }
+    .ens-regua-esc span {
+      position: absolute;
+      bottom: 1mm;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .ens-regua-mk {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      color: #dc2626;
+      font-size: 8px;
+      white-space: nowrap;
+    }
+    .ens-regua-faixas {
+      position: relative;
+      height: 9mm;
+      border-bottom: 1px solid #111;
+    }
+    .ens-regua-faixas div {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-left: 1px solid #111;
+      font-size: 7px;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 1mm;
+    }
+    .ens-regua-legenda {
+      font-size: 7px;
+      color: #555;
+      margin-top: 1mm;
+    }
   </style>
 </head>
 <body>
@@ -975,8 +1179,8 @@
     <section id="home" class="card">
       <h2>Projetos</h2>
       <p style="font-size: 13px; color: #4b5563; margin-top: 0;">
-        Cadastre o projeto antes do campo (nº, cliente, quantidade de sondagens
-        e poços). Os boletins já saem pré-preenchidos.
+        Cadastre o projeto antes do campo (nº, cliente, quantidade de sondagens,
+        poços e ensaios). Os boletins já saem pré-preenchidos.
       </p>
       <div id="lista-projetos" class="small-muted">
         Nenhum projeto cadastrado ainda.
@@ -994,6 +1198,9 @@
         </button>
         <button class="btn-secondary" onclick="showSection('sondagem')">
           Sondagem / Poço
+        </button>
+        <button class="btn-secondary" onclick="abrirEnsaioAvulso()">
+          Ensaio de Permeabilidade
         </button>
       </div>
 
@@ -1083,6 +1290,14 @@
               />
             </div>
           </div>
+          <div class="row">
+            <div>
+              <label for="proj-qtd-ens">Qtde. de ensaios de permeabilidade</label>
+              <input type="number" inputmode="numeric" min="0" max="99"
+                     id="proj-qtd-ens" placeholder="0" />
+            </div>
+            <div></div>
+          </div>
 
           <div class="btn-group">
             <button type="submit" class="btn-primary">Salvar projeto</button>
@@ -1109,6 +1324,11 @@
           Toque na sondagem para preencher (ou reabrir) o boletim.
         </p>
         <div id="projdet-sts" class="st-grid"></div>
+
+        <div id="projdet-eps-wrap" class="hidden">
+          <div class="section-title" style="margin-top:12px;">Ensaios de permeabilidade</div>
+          <div id="projdet-eps" class="st-grid"></div>
+        </div>
 
         <div class="btn-group" style="margin-top: 14px;">
           <button type="button" class="btn-primary" onclick="comAvisoDeErro(exportarProjetoPDF)">
@@ -1303,6 +1523,202 @@
         <div id="lista-diario" class="small-muted">
           Nenhum registro salvo ainda.
         </div>
+      </div>
+    </section>
+
+    <!-- Ensaio de Permeabilidade -->
+    <section id="ensaio" class="hidden">
+      <div class="card">
+        <h2>Ensaio de Permeabilidade</h2>
+        <p class="small-muted">
+          Ensaio em furo de sondagem, nível variável (rebaixamento). Em campo,
+          basta anotar a variação do nível d'água em cada leitura; o
+          coeficiente K, o volume e a classificação saem automaticamente.
+        </p>
+        <button type="button" class="btn-secondary btn-small"
+                style="margin-bottom: 12px;" onclick="usarUltimoEnsaio()">
+          ↻ Usar dados do último ensaio
+        </button>
+        <form id="form-ensaio" onsubmit="salvarEnsaio(event)">
+          <input type="hidden" id="ens-projetoid" />
+          <input type="hidden" id="ens-lat" />
+          <input type="hidden" id="ens-lon" />
+
+          <div class="row">
+            <div>
+              <label for="ens-projeto">Nº do Projeto</label>
+              <div class="prefix-field">
+                <span>P</span>
+                <input type="text" inputmode="numeric" id="ens-projeto"
+                       placeholder="288" required />
+              </div>
+            </div>
+            <div>
+              <label for="ens-id">Ensaio</label>
+              <input type="text" id="ens-id" placeholder="EP-01" required />
+            </div>
+          </div>
+
+          <label for="ens-local">Obra / Local</label>
+          <div class="field-with-btn">
+            <input type="text" id="ens-local" />
+            <button type="button" id="ens-btn-gps" class="btn-secondary"
+                    onclick="capturarLocal('ens')">📍 GPS</button>
+          </div>
+          <div id="ens-gps-info" class="gps-info"></div>
+
+          <div class="row">
+            <div>
+              <label for="ens-data">Data</label>
+              <input type="date" id="ens-data" />
+            </div>
+            <div>
+              <label for="ens-furo">Furo nº</label>
+              <input type="text" id="ens-furo" placeholder="Igual ao ensaio, ou ex.: ST-03" />
+            </div>
+          </div>
+
+          <div class="section-title">Geometria do furo</div>
+          <div class="row">
+            <div>
+              <label for="ens-diam">Diâmetro do furo</label>
+              <div style="display:flex; gap:6px;">
+                <input type="number" step="0.01" inputmode="decimal" id="ens-diam"
+                       placeholder="4" oninput="atualizarResultadoEnsaio()" />
+                <select id="ens-diam-unid" style="width:96px; flex:none;"
+                        onchange="atualizarResultadoEnsaio()">
+                  <option value="pol">pol (")</option>
+                  <option value="cm">cm</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="ens-prof">Profundidade do furo (m)</label>
+              <input type="number" step="0.01" inputmode="decimal" id="ens-prof"
+                     placeholder="1,00" oninput="atualizarResultadoEnsaio()" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="ens-trecho">Trecho ensaiado (m)</label>
+              <input type="number" step="0.01" inputmode="decimal" id="ens-trecho"
+                     placeholder="Se vazio, = profundidade" oninput="atualizarResultadoEnsaio()" />
+            </div>
+            <div>
+              <label for="ens-posicao">Ensaio realizado</label>
+              <select id="ens-posicao">
+                <option value="acima">Acima do NA</option>
+                <option value="abaixo">Abaixo do NA</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-title">Plano de leituras</div>
+          <div class="row">
+            <div>
+              <label for="ens-plano">Intervalos</label>
+              <select id="ens-plano" onchange="aplicarPlanoEnsaio()">
+                <option value="rapido">30", 1', 2' … a cada 1 min até 20'</option>
+                <option value="dez">A cada 10' até 30'</option>
+                <option value="pers">Personalizado</option>
+              </select>
+            </div>
+          </div>
+          <div id="ens-plano-pers" class="row hidden">
+            <div>
+              <label for="ens-pers-int">A cada (min)</label>
+              <input type="number" step="0.5" inputmode="decimal" id="ens-pers-int"
+                     value="5" onchange="aplicarPlanoEnsaio()" />
+            </div>
+            <div>
+              <label for="ens-pers-tot">Até (min)</label>
+              <input type="number" step="1" inputmode="decimal" id="ens-pers-tot"
+                     value="30" onchange="aplicarPlanoEnsaio()" />
+            </div>
+          </div>
+
+          <div class="section-title">Execução</div>
+          <div class="ens-timer">
+            <div class="ens-timer-relogio" id="ens-relogio">00:00</div>
+            <div class="ens-timer-msg" id="ens-timer-msg">
+              Encha o furo até a boca e mantenha o nível ~10 min para saturar.
+              Ao cortar a água, toque em "Iniciar (t0)".
+            </div>
+            <div class="btn-group" style="margin-top:8px;">
+              <button type="button" class="btn-secondary" id="ens-btn-sat"
+                      onclick="iniciarSaturacao()">⏳ Saturação 10'</button>
+              <button type="button" class="btn-primary" id="ens-btn-iniciar"
+                      onclick="iniciarEnsaio()">▶ Iniciar (t0)</button>
+              <button type="button" class="btn-secondary hidden" id="ens-btn-parar"
+                      onclick="pararCronometroEnsaio()">⏹ Parar cronômetro</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="ens-hora">Hora inicial (t0)</label>
+              <input type="time" step="1" id="ens-hora" onchange="renderHorasLeituras()" />
+            </div>
+            <div></div>
+          </div>
+
+          <div class="ens-leit-cab">
+            <span>Tempo</span><span>Hora</span><span>Variação do NA (cm)</span>
+          </div>
+          <div id="ens-leituras"></div>
+          <button type="button" class="btn-secondary btn-small"
+                  onclick="adicionarLeituraEnsaio()">+ Adicionar leitura</button>
+
+          <div class="section-title" style="margin-top:14px;">Resultado</div>
+          <div id="ens-resultado" class="ens-resultado">
+            Preencha a geometria do furo e as leituras.
+          </div>
+
+          <label for="ens-obs" style="margin-top:12px;">Observação</label>
+          <textarea id="ens-obs" placeholder="Condições do ensaio, material, ocorrências."></textarea>
+
+          <div class="row">
+            <div>
+              <label for="ens-resp">Responsável</label>
+              <input type="text" id="ens-resp" />
+            </div>
+            <div>
+              <label for="ens-verif">Verificado</label>
+              <input type="text" id="ens-verif" />
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button id="btn-ensaio-salvar" type="submit" class="btn-primary">
+              Salvar ensaio
+            </button>
+            <button type="button" class="btn-secondary" onclick="limparEnsaio()">
+              Limpar formulário
+            </button>
+            <button type="button" class="btn-secondary" onclick="exportarEnsaioCSV()">
+              Exportar CSV
+            </button>
+            <button type="button" class="btn-secondary" onclick="executarVoltar()">
+              Voltar
+            </button>
+            <button id="btn-ensaio-cancelar-edicao" type="button"
+                    class="btn-secondary hidden" onclick="cancelarEdicaoEnsaio()">
+              Cancelar edição
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Ensaios salvos</div>
+        <div id="bulk-bar-ensaio" class="bulk-bar hidden">
+          <span class="bulk-count" id="bulk-count-ensaio">0 selecionados</span>
+          <button type="button" class="btn-primary btn-small"
+                  onclick="comAvisoDeErro(exportarBulkEnsaio)">Exportar PDF</button>
+          <button type="button" class="btn-secondary btn-small"
+                  onclick="limparSelecaoEnsaio()">Limpar</button>
+        </div>
+        <div id="lista-ensaio" class="small-muted">Nenhum ensaio salvo ainda.</div>
       </div>
     </section>
 
@@ -1939,7 +2355,7 @@
 
     async function carregarBanco() {
       idb = await abrirBanco();
-      for (const key of [STORAGE_DIARIO, STORAGE_SONDAGEM, STORAGE_PROJETOS]) {
+      for (const key of [STORAGE_DIARIO, STORAGE_SONDAGEM, STORAGE_PROJETOS, STORAGE_ENSAIOS]) {
         let lista = await idbGet("registros", key);
         if (!Array.isArray(lista)) {
           // Migração: importa o que existir no localStorage
@@ -1959,7 +2375,7 @@
     let ultimoIntervaloVOC = "0,20";
 
     function showSection(id) {
-      ["home", "diario", "sondagem", "projForm", "projDet"].forEach((s) => {
+      ["home", "diario", "sondagem", "ensaio", "projForm", "projDet"].forEach((s) => {
         document.getElementById(s).classList.add("hidden");
       });
       document.getElementById(id).classList.remove("hidden");
@@ -1968,6 +2384,9 @@
         atualizarHoraEvento();
       } else if (id === "sondagem") {
         renderListaSondagem();
+      } else if (id === "ensaio") {
+        renderListaEnsaio();
+        if (!document.querySelector("#ens-leituras .ens-row")) limparEnsaio();
       } else if (id === "home") {
         renderListaProjetos();
       }
@@ -1988,7 +2407,7 @@
     let navPop = false; // evita empilhar histórico durante um movimento de "voltar"
 
     function secaoVisivel() {
-      return ["projForm", "projDet", "diario", "sondagem", "home"].find(
+      return ["projForm", "projDet", "diario", "sondagem", "ensaio", "home"].find(
         (id) => !document.getElementById(id).classList.contains("hidden")
       );
     }
@@ -2014,6 +2433,13 @@
       } else if (visivel === "sondagem") {
         const pid =
           Number(document.getElementById("sond-projetoid").value) || null;
+        if (pid && carregarRegistros(STORAGE_PROJETOS).some((p) => p.id === pid)) {
+          abrirProjeto(pid);
+        } else {
+          showSection("home");
+        }
+      } else if (visivel === "ensaio") {
+        const pid = Number(document.getElementById("ens-projetoid").value) || null;
         if (pid && carregarRegistros(STORAGE_PROJETOS).some((p) => p.id === pid)) {
           abrirProjeto(pid);
         } else {
@@ -3770,6 +4196,7 @@
         empresa: document.getElementById("proj-empresa").value.trim(),
         qtdSond: parseInt(document.getElementById("proj-qtd-sond").value, 10) || 0,
         qtdPocos: parseInt(document.getElementById("proj-qtd-pocos").value, 10) || 0,
+        qtdEns: parseInt(document.getElementById("proj-qtd-ens").value, 10) || 0,
       };
       let lista = carregarRegistros(STORAGE_PROJETOS);
       if (editingProjetoId) {
@@ -3797,6 +4224,7 @@
       document.getElementById("proj-empresa").value = p.empresa || "";
       document.getElementById("proj-qtd-sond").value = p.qtdSond || "";
       document.getElementById("proj-qtd-pocos").value = p.qtdPocos || "";
+      document.getElementById("proj-qtd-ens").value = p.qtdEns || "";
       document.getElementById("projform-titulo").textContent = "Editar projeto";
       showSection("projForm");
     }
@@ -3846,7 +4274,30 @@
         feitas.length + "/" + p.qtdSond + " sondagens preenchidas"
       );
       partes.push(pocosFeitos + "/" + (p.qtdPocos || 0) + " poços instalados");
+      const enss = ensaiosDoProjeto(p.id);
+      if (p.qtdEns) {
+        let feitosEns = 0;
+        for (let i = 1; i <= p.qtdEns; i++) if (enss.some((r) => r.idEnsaio === nomeEP(i))) feitosEns++;
+        partes.push(feitosEns + "/" + p.qtdEns + " ensaios de permeabilidade");
+      }
       document.getElementById("projdet-info").textContent = partes.join(" · ");
+
+      const gridEp = document.getElementById("projdet-eps");
+      document.getElementById("projdet-eps-wrap").classList.toggle("hidden", !p.qtdEns);
+      gridEp.innerHTML = "";
+      for (let i = 1; i <= (p.qtdEns || 0); i++) {
+        const nome = nomeEP(i);
+        const reg = enss.find((r) => r.idEnsaio === nome);
+        const c = reg ? calcularEnsaio(reg) : null;
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "st-btn" + (reg ? " done" : "");
+        b.innerHTML =
+          `<span class="st-nome">${nome}</span>` +
+          `<span class="st-status">${reg ? (c.ok ? "K " + fmtCientifico(c.K) : "✓ salvo") : "pendente"}</span>`;
+        b.onclick = () => abrirEP(nome);
+        gridEp.appendChild(b);
+      }
 
       const grid = document.getElementById("projdet-sts");
       grid.innerHTML = "";
@@ -3915,9 +4366,12 @@
         .filter((r) => r.projetoId === p.id)
         .sort((a, b) => (a.data || "").localeCompare(b.data || "") || a.id - b.id);
 
-      if (!sondagens.length && !diarios.length) {
+      const ensaiosProj = ensaiosDoProjeto(p.id).sort((a, b) =>
+        (a.idEnsaio || "").localeCompare(b.idEnsaio || "", "pt", { numeric: true })
+      );
+      if (!sondagens.length && !diarios.length && !ensaiosProj.length) {
         alert(
-          "Este projeto ainda não tem boletins nem diários preenchidos para exportar."
+          "Este projeto ainda não tem boletins, ensaios nem diários preenchidos para exportar."
         );
         return;
       }
@@ -3947,7 +4401,8 @@
               <td><strong>Poços instalados</strong>${pocos} de ${p.qtdPocos || 0}</td>
             </tr>
             <tr>
-              <td colspan="2"><strong>Diários incluídos</strong>${diarios.length}</td>
+              <td><strong>Ensaios de permeabilidade</strong>${ensaiosProj.length} de ${p.qtdEns || ensaiosProj.length}</td>
+              <td><strong>Diários incluídos</strong>${diarios.length}</td>
             </tr>
           </table>
           <div class="pp-section-label">Conteúdo deste relatório</div>
@@ -3957,6 +4412,15 @@
                 ? "Boletins de sondagem: " +
                   esc(sondagens.map((r) => r.idSond || "?").join(", ")) +
                   "<br>"
+                : ""
+            }
+            ${
+              ensaiosProj.length
+                ? "Ensaios de permeabilidade: " +
+                  esc(ensaiosProj.map((r) => {
+                    const c = calcularEnsaio(r);
+                    return (r.idEnsaio || "?") + (c.ok ? " (K = " + fmtCientifico(c.K) + " cm/s)" : "");
+                  }).join(", ")) + "<br>"
                 : ""
             }
             ${
@@ -3978,6 +4442,9 @@
       const partes = [capa];
       for (const reg of sondagens) {
         partes.push(await montarHTMLPerfil(reg));
+      }
+      for (const reg of ensaiosProj) {
+        partes.push(montarHTMLEnsaio(reg));
       }
       for (const reg of diarios) {
         partes.push(montarHTMLDiario(reg));
@@ -4016,6 +4483,7 @@
             `<div style="margin-top:4px;">` +
             `<span class="tag">${feitas.length}/${p.qtdSond} sondagens</span>` +
             `<span class="tag">${pocosFeitos}/${p.qtdPocos || 0} poços</span>` +
+            (p.qtdEns ? `<span class="tag">${ensaiosDoProjeto(p.id).length}/${p.qtdEns} ensaios</span>` : "") +
             `</div>`;
           div.onclick = () => abrirProjeto(p.id);
           cont.appendChild(div);
@@ -4154,9 +4622,11 @@
           const acc = Math.round(pos.coords.accuracy || 0);
           const utmStr = utmTexto(lat, lon);
 
-          if (prefixo === "sond") {
-            document.getElementById("sond-lat").value = lat.toFixed(6);
-            document.getElementById("sond-lon").value = lon.toFixed(6);
+          const campoLat = document.getElementById(prefixo + "-lat");
+          const campoLon = document.getElementById(prefixo + "-lon");
+          if (campoLat && campoLon) {
+            campoLat.value = lat.toFixed(6);
+            campoLon.value = lon.toFixed(6);
           }
           info.textContent =
             "GPS: " +
@@ -4205,6 +4675,7 @@
         projetos: carregarRegistros(STORAGE_PROJETOS),
         diario: carregarRegistros(STORAGE_DIARIO),
         sondagem: carregarRegistros(STORAGE_SONDAGEM),
+        ensaios: carregarRegistros(STORAGE_ENSAIOS),
         fotos: [],
       };
       for (const reg of dados.sondagem) {
@@ -4262,6 +4733,7 @@
             STORAGE_PROJETOS,
             Array.isArray(dados.projetos) ? dados.projetos : []
           );
+          mesclar(STORAGE_ENSAIOS, Array.isArray(dados.ensaios) ? dados.ensaios : []);
           for (const f of dados.fotos || []) {
             if (f && f.id && f.base64) {
               const existente = await idbGet("fotos", f.id);
@@ -5974,11 +6446,848 @@
       imprimirComNome(nomeArquivoDiario(reg));
     }
 
+    // ===================== ENSAIO DE PERMEABILIDADE =====================
+    // Ensaio em furo de sondagem, nível variável (rebaixamento), pelo método
+    // adotado no relatório P288 (Orquidário Villa-Lobos):
+    //   K = (Δh / Δt) × 1 / [ i · (2h / r + 1) ]
+    // Δh = rebaixamento total (cm), Δt = tempo total (s), h = trecho ensaiado
+    // (cm), r = raio do furo (cm), i = constante geométrica do cilindro (5).
+
+    const STORAGE_ENSAIOS = "form_ensaios_v1";
+    const ENS_I = 5;
+    let editingEnsaioId = null;
+    const selEnsaio = new Set();
+    let ensTimer = null;   // cronômetro do ensaio
+    let ensSat = null;     // contagem regressiva da saturação
+
+    function nomeEP(i) {
+      return "EP-" + String(i).padStart(2, "0");
+    }
+
+    function ensaiosDoProjeto(pid) {
+      return carregarRegistros(STORAGE_ENSAIOS).filter((r) => r.projetoId === pid);
+    }
+
+    function rotuloTempo(s) {
+      if (s === 0) return "Inicial";
+      if (s < 60) return s + '"';
+      if (s % 60 === 0) return s / 60 + "'";
+      return Math.floor(s / 60) + "'" + (s % 60) + '"';
+    }
+
+    function fmtNumBR(v, max) {
+      if (v === null || v === undefined || isNaN(v)) return "—";
+      return Number(v).toLocaleString("pt-BR", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: max == null ? 2 : max,
+      });
+    }
+
+    // 1.714e-5 -> "1,71 × 10⁻⁵"
+    function fmtCientifico(v) {
+      if (!isFinite(v) || v <= 0) return "—";
+      let exp = Math.floor(Math.log10(v));
+      let mant = v / Math.pow(10, exp);
+      if (Number(mant.toFixed(2)) >= 10) {
+        mant /= 10;
+        exp += 1;
+      }
+      const sup = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
+      const e = String(exp).split("").map((c) => sup[c]).join("");
+      return mant.toFixed(2).replace(".", ",") + " × 10" + e;
+    }
+
+    function classificarK(K) {
+      // Mello e Teixeira (1967)
+      if (!isFinite(K) || K <= 0) return "—";
+      if (K >= 1) return "Pedregulhos";
+      if (K >= 1e-3) return "Areias";
+      if (K >= 1e-7) return "Areias finas siltosas e argilosas, siltes argilosos";
+      return "Argilas";
+    }
+
+    function temposDoPlano() {
+      const plano = document.getElementById("ens-plano").value;
+      if (plano === "dez") return [0, 600, 1200, 1800];
+      if (plano === "pers") {
+        const int = num(document.getElementById("ens-pers-int").value);
+        const tot = num(document.getElementById("ens-pers-tot").value);
+        if (!(int > 0) || !(tot > 0)) return [0];
+        const out = [0];
+        for (let t = int * 60; t <= tot * 60 + 0.001; t += int * 60) out.push(Math.round(t));
+        return out.slice(0, 241);
+      }
+      const out = [0, 30];
+      for (let m = 1; m <= 20; m++) out.push(m * 60);
+      return out;
+    }
+
+    function linhaLeituraHTML(t, dh) {
+      return `
+        <div class="ens-row" data-t="${t}">
+          <span class="ens-t">${rotuloTempo(t)}</span>
+          <span class="ens-h">—</span>
+          <input type="number" step="0.1" inputmode="decimal" class="ens-dh"
+                 value="${dh === undefined || dh === null ? "" : dh}"
+                 placeholder="${t === 0 ? "0" : "cm"}"
+                 oninput="atualizarResultadoEnsaio()" />
+        </div>`;
+    }
+
+    function valoresLeiturasAtuais() {
+      const mapa = {};
+      document.querySelectorAll("#ens-leituras .ens-row").forEach((row) => {
+        const v = row.querySelector(".ens-dh").value;
+        if (v !== "") mapa[row.getAttribute("data-t")] = v;
+      });
+      return mapa;
+    }
+
+    function renderLeiturasEnsaio(tempos, valores) {
+      const cont = document.getElementById("ens-leituras");
+      cont.innerHTML = tempos
+        .map((t) => linhaLeituraHTML(t, valores[t] !== undefined ? valores[t] : t === 0 ? "0" : ""))
+        .join("");
+      renderHorasLeituras();
+      atualizarResultadoEnsaio();
+    }
+
+    function aplicarPlanoEnsaio() {
+      const pers = document.getElementById("ens-plano").value === "pers";
+      document.getElementById("ens-plano-pers").classList.toggle("hidden", !pers);
+      const valores = valoresLeiturasAtuais();
+      const tempos = temposDoPlano();
+      // Mantém leituras já anotadas em tempos fora do novo plano
+      Object.keys(valores).forEach((t) => {
+        if (!tempos.includes(Number(t))) tempos.push(Number(t));
+      });
+      tempos.sort((a, b) => a - b);
+      renderLeiturasEnsaio(tempos, valores);
+    }
+
+    function adicionarLeituraEnsaio() {
+      const rows = [...document.querySelectorAll("#ens-leituras .ens-row")];
+      const ts = rows.map((r) => Number(r.getAttribute("data-t")));
+      const ult = ts.length ? ts[ts.length - 1] : 0;
+      const passo = ts.length >= 2 ? ult - ts[ts.length - 2] : 60;
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = linhaLeituraHTML(ult + (passo > 0 ? passo : 60), "");
+      document.getElementById("ens-leituras").appendChild(wrapper.firstElementChild);
+      renderHorasLeituras();
+    }
+
+    function horaMaisSegundos(hhmm, s) {
+      const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(hhmm || "");
+      if (!m) return "—";
+      const tot = (Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3] || 0) + s) % 86400;
+      return (
+        String(Math.floor(tot / 3600)).padStart(2, "0") + ":" +
+        String(Math.floor((tot % 3600) / 60)).padStart(2, "0") +
+        (tot % 60 ? ":" + String(tot % 60).padStart(2, "0") : "")
+      );
+    }
+
+    function renderHorasLeituras() {
+      const h0 = document.getElementById("ens-hora").value;
+      document.querySelectorAll("#ens-leituras .ens-row").forEach((row) => {
+        row.querySelector(".ens-h").textContent = horaMaisSegundos(
+          h0, Number(row.getAttribute("data-t")));
+      });
+    }
+
+    function coletarEnsaio() {
+      const leituras = [];
+      document.querySelectorAll("#ens-leituras .ens-row").forEach((row) => {
+        const v = row.querySelector(".ens-dh").value.trim();
+        leituras.push({ t: Number(row.getAttribute("data-t")), dh: v });
+      });
+      return {
+        id: editingEnsaioId || Date.now(),
+        projetoId: Number(document.getElementById("ens-projetoid").value) || null,
+        projeto: getProjeto("ens-projeto"),
+        idEnsaio: document.getElementById("ens-id").value.trim(),
+        furo: document.getElementById("ens-furo").value.trim(),
+        local: document.getElementById("ens-local").value.trim(),
+        lat: document.getElementById("ens-lat").value || "",
+        lon: document.getElementById("ens-lon").value || "",
+        data: document.getElementById("ens-data").value,
+        hora: document.getElementById("ens-hora").value,
+        diametro: document.getElementById("ens-diam").value.trim(),
+        diamUnid: document.getElementById("ens-diam-unid").value,
+        profundidade: document.getElementById("ens-prof").value.trim(),
+        trecho: document.getElementById("ens-trecho").value.trim(),
+        posicao: document.getElementById("ens-posicao").value,
+        plano: document.getElementById("ens-plano").value,
+        persInt: document.getElementById("ens-pers-int").value,
+        persTot: document.getElementById("ens-pers-tot").value,
+        leituras,
+        obs: document.getElementById("ens-obs").value.trim(),
+        responsavel: document.getElementById("ens-resp").value.trim(),
+        verificado: document.getElementById("ens-verif").value.trim(),
+      };
+    }
+
+    // Cálculo do ensaio a partir do registro (mesma função para tela, PDF e CSV)
+    function calcularEnsaio(reg) {
+      const v = num(reg.diametro);
+      const D = reg.diamUnid === "cm" ? v : v * 2.54;
+      const r = D / 2;
+      const trechoM = !isNaN(num(reg.trecho)) ? num(reg.trecho) : num(reg.profundidade);
+      const h = trechoM * 100;
+      const leit = (reg.leituras || [])
+        .filter((l) => l.dh !== "" && l.dh !== null && !isNaN(num(l.dh)))
+        .map((l) => ({ t: Number(l.t), dh: num(l.dh) }))
+        .sort((a, b) => a.t - b.t);
+      const ini = leit.find((l) => l.t === 0);
+      const base = ini ? ini.dh : 0;
+      const finais = leit.filter((l) => l.t > 0);
+      const ult = finais[finais.length - 1];
+      const area = Math.PI * r * r; // cm²
+      const res = { D, r, h, trechoM, leit, base, area, ok: false, aviso: "" };
+      if (!(r > 0)) { res.aviso = "Informe o diâmetro do furo."; return res; }
+      if (!(h > 0)) { res.aviso = "Informe a profundidade do furo (ou o trecho ensaiado)."; return res; }
+      if (!ult) { res.aviso = "Anote ao menos uma leitura após o tempo inicial."; return res; }
+      res.dh = ult.dh - base;
+      res.dt = ult.t;
+      if (!(res.dh > 0)) { res.aviso = "Não houve rebaixamento registrado (Δh = 0)."; return res; }
+      res.K = (res.dh / res.dt) / (ENS_I * ((2 * h) / r + 1));
+      res.volume = (area * res.dh) / 1000;          // litros
+      res.vazao = res.volume / (res.dt / 60);        // L/min
+      res.classe = classificarK(res.K);
+      res.ok = true;
+      return res;
+    }
+
+    function rotuloDiametro(reg) {
+      if (!reg.diametro) return "—";
+      return fmtNumBR(num(reg.diametro), 2) + (reg.diamUnid === "cm" ? " cm" : '"');
+    }
+
+    function atualizarResultadoEnsaio() {
+      const el = document.getElementById("ens-resultado");
+      if (!el) return;
+      const c = calcularEnsaio(coletarEnsaio());
+      if (!c.ok) {
+        el.innerHTML = `<span class="small-muted">${esc(c.aviso)}</span>`;
+        return;
+      }
+      el.innerHTML =
+        `<div class="ens-k">K = ${fmtCientifico(c.K)} cm/s</div>` +
+        `<div>${esc(c.classe)}</div>` +
+        `<div class="small-muted" style="margin-top:4px;">` +
+        `Δh = ${fmtNumBR(c.dh)} cm em Δt = ${fmtNumBR(c.dt / 60)} min (${c.dt} s) · ` +
+        `r = ${fmtNumBR(c.r, 2)} cm · h = ${fmtNumBR(c.h, 1)} cm · ` +
+        `volume infiltrado ${fmtNumBR(c.volume, 3)} L</div>`;
+    }
+
+    // ---------- Cronômetro do ensaio ----------
+
+    function pararSaturacao() {
+      if (ensSat) clearInterval(ensSat.int);
+      ensSat = null;
+    }
+
+    function prepararAudioEnsaio() {
+      // O iPhone só libera som se o contexto de áudio nascer de um toque
+      try {
+        const C = window.AudioContext || window.webkitAudioContext;
+        if (C && !window.__ensAudio) window.__ensAudio = new C();
+        if (window.__ensAudio && window.__ensAudio.state === "suspended")
+          window.__ensAudio.resume();
+      } catch (e) {}
+    }
+
+    function bipEnsaio(longo) {
+      try {
+        const c = window.__ensAudio;
+        if (c) {
+          const o = c.createOscillator();
+          const g = c.createGain();
+          o.frequency.value = 880;
+          g.gain.value = 0.25;
+          o.connect(g);
+          g.connect(c.destination);
+          o.start();
+          o.stop(c.currentTime + (longo ? 0.9 : 0.35));
+        }
+      } catch (e) {}
+      try {
+        if (navigator.vibrate) navigator.vibrate(longo ? [400, 150, 400] : [200]);
+      } catch (e) {}
+    }
+
+    async function manterTelaLigada(ligar) {
+      try {
+        if (ligar && navigator.wakeLock && !window.__ensWake) {
+          window.__ensWake = await navigator.wakeLock.request("screen");
+        } else if (!ligar && window.__ensWake) {
+          await window.__ensWake.release();
+          window.__ensWake = null;
+        }
+      } catch (e) {}
+    }
+
+    function fmtRelogio(seg) {
+      const s = Math.max(0, Math.floor(seg));
+      return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    }
+
+    function iniciarSaturacao() {
+      prepararAudioEnsaio();
+      pararSaturacao();
+      manterTelaLigada(true);
+      const fim = Date.now() + 600000;
+      const msg = document.getElementById("ens-timer-msg");
+      const rel = document.getElementById("ens-relogio");
+      ensSat = {
+        int: setInterval(() => {
+          const falta = (fim - Date.now()) / 1000;
+          rel.textContent = fmtRelogio(falta);
+          msg.textContent = "Saturando o solo — mantenha o furo cheio até a boca.";
+          if (falta <= 0) {
+            pararSaturacao();
+            bipEnsaio(true);
+            rel.textContent = "00:00";
+            msg.textContent = "Saturação concluída. Corte a água e toque em \"Iniciar (t0)\".";
+          }
+        }, 250),
+      };
+    }
+
+    function iniciarEnsaio() {
+      prepararAudioEnsaio();
+      pararSaturacao();
+      if (ensTimer) pararCronometroEnsaio();
+      const agora = new Date();
+      // hora com segundos: os horários de cada leitura batem com o cronômetro
+      document.getElementById("ens-hora").value =
+        String(agora.getHours()).padStart(2, "0") + ":" +
+        String(agora.getMinutes()).padStart(2, "0") + ":" +
+        String(agora.getSeconds()).padStart(2, "0");
+      renderHorasLeituras();
+      const inicial = document.querySelector('#ens-leituras .ens-row[data-t="0"] .ens-dh');
+      if (inicial && inicial.value === "") inicial.value = "0";
+      manterTelaLigada(true);
+      ensTimer = {
+        inicio: agora.getTime(),
+        avisados: new Set(),
+        int: setInterval(tickEnsaio, 250),
+      };
+      document.getElementById("ens-btn-iniciar").textContent = "↺ Reiniciar (t0)";
+      document.getElementById("ens-btn-parar").classList.remove("hidden");
+      tickEnsaio();
+    }
+
+    function tickEnsaio() {
+      if (!ensTimer) return;
+      const dec = (Date.now() - ensTimer.inicio) / 1000;
+      document.getElementById("ens-relogio").textContent = fmtRelogio(dec);
+      const rows = [...document.querySelectorAll("#ens-leituras .ens-row")];
+      let proxima = null;
+      rows.forEach((row) => {
+        const t = Number(row.getAttribute("data-t"));
+        row.classList.remove("proxima");
+        if (t > 0 && dec >= t && !ensTimer.avisados.has(t)) {
+          ensTimer.avisados.add(t);
+          bipEnsaio(false);
+          row.classList.add("agora");
+          setTimeout(() => row.classList.remove("agora"), 4000);
+          try { row.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+        }
+        if (!proxima && t > dec) proxima = row;
+      });
+      const msg = document.getElementById("ens-timer-msg");
+      if (proxima) {
+        proxima.classList.add("proxima");
+        const t = Number(proxima.getAttribute("data-t"));
+        msg.textContent = "Próxima leitura: " + rotuloTempo(t) + " em " + fmtRelogio(t - dec);
+      } else {
+        msg.textContent = "Plano de leituras concluído. Confira os valores e salve.";
+        pararCronometroEnsaio(true);
+      }
+    }
+
+    function pararCronometroEnsaio(concluido) {
+      if (ensTimer) clearInterval(ensTimer.int);
+      ensTimer = null;
+      document.querySelectorAll("#ens-leituras .ens-row").forEach((r) => r.classList.remove("proxima"));
+      document.getElementById("ens-btn-iniciar").textContent = "▶ Iniciar (t0)";
+      document.getElementById("ens-btn-parar").classList.add("hidden");
+      if (concluido) bipEnsaio(true);
+      manterTelaLigada(false);
+    }
+
+    // ---------- Formulário ----------
+
+    function preencherFormEnsaio(reg) {
+      setProjeto("ens-projeto", reg.projeto || "");
+      document.getElementById("ens-projetoid").value = reg.projetoId || "";
+      document.getElementById("ens-id").value = reg.idEnsaio || "";
+      document.getElementById("ens-furo").value = reg.furo || "";
+      document.getElementById("ens-local").value = reg.local || "";
+      document.getElementById("ens-lat").value = reg.lat || "";
+      document.getElementById("ens-lon").value = reg.lon || "";
+      document.getElementById("ens-gps-info").textContent =
+        reg.lat && reg.lon ? "GPS: " + reg.lat + ", " + reg.lon + " · " + utmTexto(num(reg.lat), num(reg.lon)) : "";
+      document.getElementById("ens-data").value = reg.data || "";
+      document.getElementById("ens-hora").value = reg.hora || "";
+      document.getElementById("ens-diam").value = reg.diametro || "";
+      document.getElementById("ens-diam-unid").value = reg.diamUnid || "pol";
+      document.getElementById("ens-prof").value = reg.profundidade || "";
+      document.getElementById("ens-trecho").value = reg.trecho || "";
+      document.getElementById("ens-posicao").value = reg.posicao || "acima";
+      document.getElementById("ens-plano").value = reg.plano || "rapido";
+      document.getElementById("ens-pers-int").value = reg.persInt || "5";
+      document.getElementById("ens-pers-tot").value = reg.persTot || "30";
+      document.getElementById("ens-plano-pers").classList.toggle("hidden", (reg.plano || "rapido") !== "pers");
+      document.getElementById("ens-obs").value = reg.obs || "";
+      document.getElementById("ens-resp").value = reg.responsavel || "";
+      document.getElementById("ens-verif").value = reg.verificado || "";
+      const leit = reg.leituras || [];
+      if (leit.length) {
+        const valores = {};
+        leit.forEach((l) => { if (l.dh !== "") valores[l.t] = l.dh; });
+        renderLeiturasEnsaio(leit.map((l) => Number(l.t)).sort((a, b) => a - b), valores);
+      } else {
+        renderLeiturasEnsaio(temposDoPlano(), {});
+      }
+    }
+
+    function limparEnsaio() {
+      pararSaturacao();
+      if (ensTimer) pararCronometroEnsaio();
+      document.getElementById("form-ensaio").reset();
+      ["ens-projetoid", "ens-lat", "ens-lon"].forEach((id) => (document.getElementById(id).value = ""));
+      document.getElementById("ens-gps-info").textContent = "";
+      document.getElementById("ens-relogio").textContent = "00:00";
+      document.getElementById("ens-plano-pers").classList.add("hidden");
+      document.getElementById("ens-data").value = hojeISO();
+      renderLeiturasEnsaio(temposDoPlano(), {});
+    }
+
+    function atualizarEstadoEdicaoEnsaio() {
+      const s = document.getElementById("btn-ensaio-salvar");
+      const c = document.getElementById("btn-ensaio-cancelar-edicao");
+      s.textContent = editingEnsaioId ? "Atualizar ensaio" : "Salvar ensaio";
+      c.classList.toggle("hidden", !editingEnsaioId);
+    }
+
+    function cancelarEdicaoEnsaio() {
+      editingEnsaioId = null;
+      atualizarEstadoEdicaoEnsaio();
+      limparEnsaio();
+    }
+
+    function salvarEnsaio(event) {
+      event.preventDefault();
+      const reg = coletarEnsaio();
+      // Remove leituras vazias no fim do plano (mantém o histórico limpo)
+      while (reg.leituras.length > 1 && reg.leituras[reg.leituras.length - 1].dh === "") {
+        reg.leituras.pop();
+      }
+      if (!reg.furo) reg.furo = reg.idEnsaio;
+      const c = calcularEnsaio(reg);
+      if (!c.ok && !confirm(c.aviso + "\n\nSalvar mesmo assim?")) return;
+      let lista = carregarRegistros(STORAGE_ENSAIOS);
+      if (editingEnsaioId) {
+        const i = lista.findIndex((r) => r.id === editingEnsaioId);
+        if (i !== -1) lista[i] = reg;
+      } else {
+        lista.push(reg);
+      }
+      salvarRegistros(STORAGE_ENSAIOS, lista);
+      if (ensTimer) pararCronometroEnsaio();
+      editingEnsaioId = null;
+      atualizarEstadoEdicaoEnsaio();
+      limparEnsaio();
+      renderListaEnsaio();
+      mostrarToast("Ensaio salvo ✓" + (c.ok ? " · K = " + fmtCientifico(c.K) + " cm/s" : ""));
+      if (reg.projetoId && carregarRegistros(STORAGE_PROJETOS).some((p) => p.id === reg.projetoId)) {
+        abrirProjeto(reg.projetoId);
+      }
+    }
+
+    function editarEnsaio(id) {
+      const reg = carregarRegistros(STORAGE_ENSAIOS).find((r) => r.id === id);
+      if (!reg) return;
+      if (ensTimer) pararCronometroEnsaio();
+      editingEnsaioId = id;
+      preencherFormEnsaio(reg);
+      atualizarEstadoEdicaoEnsaio();
+      showSection("ensaio");
+    }
+
+    function excluirEnsaio(id) {
+      if (!confirm("Deseja realmente excluir este ensaio?")) return;
+      salvarRegistros(STORAGE_ENSAIOS, carregarRegistros(STORAGE_ENSAIOS).filter((r) => r.id !== id));
+      selEnsaio.delete(id);
+      if (editingEnsaioId === id) cancelarEdicaoEnsaio();
+      renderListaEnsaio();
+    }
+
+    function usarUltimoEnsaio() {
+      const lista = carregarRegistros(STORAGE_ENSAIOS);
+      if (!lista.length) {
+        alert("Nenhum ensaio anterior para copiar.");
+        return;
+      }
+      copiarGeometriaEnsaio(lista[lista.length - 1], true);
+    }
+
+    // Copia o que normalmente se repete entre ensaios de um mesmo campo
+    function copiarGeometriaEnsaio(ant, incluirIdent) {
+      const set = (id, v) => {
+        const el = document.getElementById(id);
+        if (el && !el.value && v) el.value = v;
+      };
+      if (incluirIdent) {
+        if (!document.getElementById("ens-projeto").value) setProjeto("ens-projeto", ant.projeto || "");
+        set("ens-local", ant.local);
+      }
+      set("ens-diam", ant.diametro);
+      if (ant.diamUnid) document.getElementById("ens-diam-unid").value = ant.diamUnid;
+      set("ens-prof", ant.profundidade);
+      set("ens-trecho", ant.trecho);
+      if (ant.posicao) document.getElementById("ens-posicao").value = ant.posicao;
+      set("ens-resp", ant.responsavel);
+      set("ens-verif", ant.verificado);
+      if (ant.plano) {
+        document.getElementById("ens-plano").value = ant.plano;
+        if (ant.persInt) document.getElementById("ens-pers-int").value = ant.persInt;
+        if (ant.persTot) document.getElementById("ens-pers-tot").value = ant.persTot;
+        aplicarPlanoEnsaio();
+      }
+      atualizarResultadoEnsaio();
+    }
+
+    function abrirEP(nome) {
+      const p = carregarRegistros(STORAGE_PROJETOS).find((x) => x.id === projetoAtivoId);
+      if (!p) return;
+      const reg = ensaiosDoProjeto(p.id).find((r) => r.idEnsaio === nome);
+      if (reg) {
+        editarEnsaio(reg.id);
+        return;
+      }
+      editingEnsaioId = null;
+      atualizarEstadoEdicaoEnsaio();
+      limparEnsaio();
+      setProjeto("ens-projeto", p.numero || "");
+      document.getElementById("ens-local").value = p.local || "";
+      document.getElementById("ens-id").value = nome;
+      document.getElementById("ens-projetoid").value = p.id;
+      // Geometria e equipe do ensaio anterior do mesmo projeto
+      const anteriores = ensaiosDoProjeto(p.id);
+      if (anteriores.length) copiarGeometriaEnsaio(anteriores[anteriores.length - 1], false);
+      showSection("ensaio");
+    }
+
+    function abrirEnsaioAvulso() {
+      if (editingEnsaioId) cancelarEdicaoEnsaio();
+      showSection("ensaio");
+    }
+
+    // ---------- Lista, seleção e exportação ----------
+
+    function alternarSelEnsaio(id, marcado) {
+      if (marcado) selEnsaio.add(id);
+      else selEnsaio.delete(id);
+      atualizarBulkBarEnsaio();
+    }
+
+    function limparSelecaoEnsaio() {
+      selEnsaio.clear();
+      renderListaEnsaio();
+    }
+
+    function atualizarBulkBarEnsaio() {
+      const bar = document.getElementById("bulk-bar-ensaio");
+      if (!bar) return;
+      bar.classList.toggle("hidden", selEnsaio.size === 0);
+      document.getElementById("bulk-count-ensaio").textContent =
+        selEnsaio.size + (selEnsaio.size === 1 ? " selecionado" : " selecionados");
+    }
+
+    function renderListaEnsaio() {
+      const lista = carregarRegistros(STORAGE_ENSAIOS);
+      const cont = document.getElementById("lista-ensaio");
+      if (!cont) return;
+      if (!lista.length) {
+        cont.textContent = "Nenhum ensaio salvo ainda.";
+        atualizarBulkBarEnsaio();
+        return;
+      }
+      cont.innerHTML = "";
+      lista.slice().reverse().forEach((reg) => {
+        const c = calcularEnsaio(reg);
+        const div = document.createElement("div");
+        div.className = "record record-sel";
+        const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "sem data";
+        div.innerHTML = `
+          <input type="checkbox" ${selEnsaio.has(reg.id) ? "checked" : ""}
+                 onchange="alternarSelEnsaio(${reg.id}, this.checked)" aria-label="Selecionar" />
+          <div class="record-body">
+            <div class="record-title">Projeto ${esc(reg.projeto || "(sem nº)")} – ${esc(reg.idEnsaio || "ensaio")}</div>
+            <div class="small-muted">${esc(reg.local || "Local não informado")} · ${dataFmt}</div>
+            <div style="margin-top:4px;">
+              <span class="tag">Ø ${esc(rotuloDiametro(reg))} · ${esc(fmtNumBR(c.trechoM))} m</span>
+              <span class="tag" style="${c.ok ? "background:#dbeafe;color:#1d4ed8;" : ""}">
+                ${c.ok ? "K = " + fmtCientifico(c.K) + " cm/s" : esc(c.aviso)}
+              </span>
+            </div>
+            <div style="margin-top:6px; text-align:right;">
+              <button type="button" class="btn-primary btn-small"
+                      onclick="comAvisoDeErro(() => gerarPDFEnsaio(${reg.id}))">Ensaio (PDF)</button>
+              <button type="button" class="btn-secondary btn-small" onclick="editarEnsaio(${reg.id})">Editar</button>
+              <button type="button" class="btn-danger btn-small" onclick="excluirEnsaio(${reg.id})">Excluir</button>
+            </div>
+          </div>`;
+        cont.appendChild(div);
+      });
+      atualizarBulkBarEnsaio();
+    }
+
+    function exportarEnsaioCSV() {
+      const lista = carregarRegistros(STORAGE_ENSAIOS);
+      if (!lista.length) {
+        alert("Não há ensaios para exportar.");
+        return;
+      }
+      const cab = ["projeto", "ensaio", "furo", "local", "lat", "lon", "data", "hora_inicial",
+        "diametro", "profundidade_m", "trecho_m", "posicao", "delta_h_cm", "delta_t_s",
+        "K_cm_s", "classificacao", "volume_L", "vazao_L_min", "leituras", "observacao",
+        "responsavel", "verificado"];
+      const q = (v) => {
+        v = String(v == null ? "" : v).replace(/"/g, '""');
+        return /[;\n"]/.test(v) ? `"${v}"` : v;
+      };
+      const linhas = [cab.join(";")];
+      lista.forEach((r) => {
+        const c = calcularEnsaio(r);
+        linhas.push([
+          r.projeto, r.idEnsaio, r.furo, r.local, r.lat, r.lon, r.data, r.hora,
+          rotuloDiametro(r), r.profundidade, c.trechoM, r.posicao === "abaixo" ? "abaixo do NA" : "acima do NA",
+          c.ok ? c.dh : "", c.ok ? c.dt : "", c.ok ? c.K.toExponential(3) : "", c.ok ? c.classe : "",
+          c.ok ? c.volume.toFixed(4) : "", c.ok ? c.vazao.toFixed(5) : "",
+          (r.leituras || []).filter((l) => l.dh !== "").map((l) => rotuloTempo(l.t) + "=" + l.dh + "cm").join(" | "),
+          r.obs, r.responsavel, r.verificado,
+        ].map(q).join(";"));
+      });
+      const blob = new Blob(["﻿" + linhas.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ensaios_permeabilidade_" + hojeISO().replace(/-/g, "") + ".csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function nomeArquivoEnsaio(reg) {
+      const partes = [sanitizarNome(reg.projeto) || "Ensaio", sanitizarNome(reg.idEnsaio) || "EP"];
+      if (reg.data) partes.push(reg.data);
+      return partes.join("_");
+    }
+
+    async function gerarPDFEnsaio(id) {
+      const reg = carregarRegistros(STORAGE_ENSAIOS).find((r) => r.id === id);
+      if (!reg) return;
+      document.getElementById("print-area").innerHTML = montarHTMLEnsaio(reg);
+      await imprimirComNome(nomeArquivoEnsaio(reg));
+    }
+
+    async function exportarBulkEnsaio() {
+      const sels = carregarRegistros(STORAGE_ENSAIOS)
+        .filter((r) => selEnsaio.has(r.id))
+        .sort((a, b) => (a.idEnsaio || "").localeCompare(b.idEnsaio || "", "pt", { numeric: true }));
+      if (!sels.length) {
+        alert("Selecione ao menos um ensaio.");
+        return;
+      }
+      document.getElementById("print-area").innerHTML = sels.map(montarHTMLEnsaio).join("");
+      const projetos = [...new Set(sels.map((r) => r.projeto).filter(Boolean))];
+      const base = projetos.length === 1 ? sanitizarNome(projetos[0]) + "_Ensaios" : "Ensaios";
+      await imprimirComNome(base + "_" + sels.length + "-permeabilidade");
+    }
+
+    // ---------- PDF ----------
+
+    // Gráfico rebaixamento × tempo, desenhado em canvas e embutido como imagem
+    // (imagem aparece igual na tela, na impressão e no PDF gerado pelo app).
+    function graficoEnsaio(c) {
+      try {
+        const W = 900, H = 540;
+        const cv = document.createElement("canvas");
+        cv.width = W; cv.height = H;
+        const g = cv.getContext("2d");
+        if (!g) return "";
+        const m = { l: 92, r: 24, t: 24, b: 70 };
+        const pw = W - m.l - m.r, ph = H - m.t - m.b;
+        const pts = c.leit.map((l) => ({ x: l.t / 60, y: l.dh - c.base }));
+        const xmax = Math.max(1, ...pts.map((p) => p.x));
+        const ymax = Math.max(0.1, ...pts.map((p) => p.y)) * 1.1;
+        const X = (x) => m.l + (x / xmax) * pw;
+        const Y = (y) => m.t + (y / ymax) * ph; // rebaixamento cresce para baixo
+        g.fillStyle = "#fff"; g.fillRect(0, 0, W, H);
+        g.font = "22px sans-serif"; g.fillStyle = "#333"; g.strokeStyle = "#ddd"; g.lineWidth = 1.5;
+        const passo = (v) => { const p = Math.pow(10, Math.floor(Math.log10(v / 5))); return [1, 2, 5, 10].map((k) => k * p).find((k) => v / k <= 6); };
+        const sx = passo(xmax), sy = passo(ymax);
+        g.textAlign = "center";
+        for (let x = 0; x <= xmax + 1e-9; x += sx) {
+          g.beginPath(); g.moveTo(X(x), m.t); g.lineTo(X(x), m.t + ph); g.stroke();
+          g.fillText(fmtNumBR(x, 1), X(x), m.t + ph + 30);
+        }
+        g.textAlign = "right";
+        for (let y = 0; y <= ymax + 1e-9; y += sy) {
+          g.beginPath(); g.moveTo(m.l, Y(y)); g.lineTo(m.l + pw, Y(y)); g.stroke();
+          g.fillText(fmtNumBR(y, 1), m.l - 10, Y(y) + 8);
+        }
+        g.strokeStyle = "#111"; g.lineWidth = 2; g.strokeRect(m.l, m.t, pw, ph);
+        g.textAlign = "center"; g.font = "bold 22px sans-serif";
+        g.fillText("Tempo acumulado (min)", m.l + pw / 2, H - 12);
+        g.save(); g.translate(26, m.t + ph / 2); g.rotate(-Math.PI / 2);
+        g.fillText("Rebaixamento do NA (cm)", 0, 0); g.restore();
+        // reta média adotada pelo método (0 → leitura final)
+        g.setLineDash([10, 8]); g.strokeStyle = "#9ca3af"; g.lineWidth = 2.5;
+        g.beginPath(); g.moveTo(X(0), Y(0)); g.lineTo(X(c.dt / 60), Y(c.dh)); g.stroke();
+        g.setLineDash([]);
+        g.strokeStyle = "#1d4ed8"; g.lineWidth = 3.5; g.beginPath();
+        pts.forEach((p, i) => (i ? g.lineTo(X(p.x), Y(p.y)) : g.moveTo(X(p.x), Y(p.y))));
+        g.stroke();
+        g.fillStyle = "#1d4ed8";
+        pts.forEach((p) => { g.beginPath(); g.arc(X(p.x), Y(p.y), 6, 0, Math.PI * 2); g.fill(); });
+        return cv.toDataURL("image/png");
+      } catch (e) {
+        return "";
+      }
+    }
+
+    // Régua de Mello e Teixeira (1967) com a posição do K obtido
+    function reguaClassificacao(K, rotulo) {
+      const lmax = 2, lmin = -9, span = lmax - lmin;
+      const pos = (l) => ((lmax - l) / span) * 100;
+      const faixas = [
+        [2, 0, "pedregulhos"], [0, -3, "areias"],
+        [-3, -7, "areias finas siltosas e argilosas, siltes argilosos"], [-7, -9, "argilas"],
+      ];
+      const ticks = [[2, "10²"], [0, "1"], [-2, "10⁻²"], [-4, "10⁻⁴"], [-6, "10⁻⁶"], [-8, "10⁻⁸"]];
+      const lk = Math.max(lmin, Math.min(lmax, Math.log10(K)));
+      return `
+        <div class="ens-regua">
+          <div class="ens-regua-esc">
+            ${ticks.map(([l, t]) => `<span style="left:${pos(l)}%">${t}</span>`).join("")}
+            ${isFinite(K) && K > 0 ? `<b class="ens-regua-mk" style="left:${pos(lk)}%">▼ ${esc(rotulo)}</b>` : ""}
+          </div>
+          <div class="ens-regua-faixas">
+            ${faixas.map(([a, b, n]) => `<div style="left:${pos(a)}%;width:${pos(b) - pos(a)}%">${n}</div>`).join("")}
+          </div>
+          <div class="ens-regua-legenda">K (cm/s) · Mello e Teixeira (1967)</div>
+        </div>`;
+    }
+
+    function montarHTMLEnsaio(reg) {
+      const c = calcularEnsaio(reg);
+      const dataFmt = reg.data ? reg.data.split("-").reverse().join("/") : "—";
+      const lidas = (reg.leituras || []).filter((l) => l.dh !== "" && !isNaN(num(l.dh)));
+      const naDepois = c.ok ? c.dh : NaN;
+
+      const linhas = lidas.map((l) => {
+        const dh = num(l.dh) - c.base;
+        const vol = c.area > 0 ? (c.area * dh) / 1000 : NaN;
+        return `<tr><td>${esc(horaMaisSegundos(reg.hora, Number(l.t)))}</td>` +
+          `<td>${rotuloTempo(Number(l.t))}</td>` +
+          `<td>${fmtNumBR(num(l.dh), 2)}</td>` +
+          `<td>${fmtNumBR(vol, 3)}</td></tr>`;
+      }).join("");
+
+      let coordRow = "";
+      if (reg.lat && reg.lon) {
+        const u = latLonParaUTM(num(reg.lat), num(reg.lon));
+        coordRow = `<tr><td colspan="3"><strong>Coordenadas (SIRGAS 2000 / UTM ${u.zone}${u.hemi})</strong>` +
+          `E ${fmt0(u.e)} m · N ${fmt0(u.n)} m</td></tr>`;
+      }
+
+      const grafico = c.ok ? graficoEnsaio(c) : "";
+      const rotulo = reg.idEnsaio || "EP";
+
+      const memoria = c.ok
+        ? `<div class="ens-memo">
+             <div>K = (Δh / Δt) × 1 / [ i · (2h / r + 1) ]</div>
+             <div>K = (${fmtNumBR(c.dh)} / ${c.dt}) × 1 / [ ${ENS_I} · (${fmtNumBR(2 * c.h, 1)} / ${fmtNumBR(c.r, 2)} + 1) ]</div>
+             <div class="ens-memo-res">K = ${fmtCientifico(c.K)} cm/s &nbsp;(${fmtCientifico(c.K / 100)} m/s)</div>
+             <div class="ens-memo-leg">Δh = rebaixamento total (cm) · Δt = tempo total (s) ·
+               h = trecho ensaiado (cm) · r = raio do furo (cm) · i = constante geométrica do cilindro</div>
+           </div>`
+        : `<div class="ens-memo">${esc(c.aviso)}</div>`;
+
+      return `
+        <div class="pp-page">
+          <div class="pp-head">
+            <img src="LogoColorido.svg" alt="" onerror="this.style.display='none'" />
+            <div class="pp-title">ENSAIO DE PERMEABILIDADE EM SOLOS<br>
+              <span style="font-weight:600;font-size:10.5px;">Ensaio em sondagem — nível variável (rebaixamento)</span></div>
+          </div>
+
+          <table class="pp-info">
+            <tr>
+              <td><strong>Projeto</strong>${esc(reg.projeto || "—")}</td>
+              <td><strong>Obra / Local</strong>${esc(reg.local || "—")}</td>
+              <td><strong>Data</strong>${esc(dataFmt)}</td>
+            </tr>
+            <tr>
+              <td><strong>Ensaio / Furo nº</strong>${esc(reg.idEnsaio || "—")} / ${esc(reg.furo || reg.idEnsaio || "—")}</td>
+              <td><strong>Tipo de ensaio</strong>Rebaixamento · ${reg.posicao === "abaixo" ? "abaixo do NA" : "acima do NA"}</td>
+              <td><strong>Hora inicial</strong>${esc(reg.hora || "—")}</td>
+            </tr>
+            <tr>
+              <td><strong>Diâmetro do furo</strong>${esc(rotuloDiametro(reg))}${c.r > 0 ? " (r = " + fmtNumBR(c.r, 2) + " cm)" : ""}</td>
+              <td><strong>Profundidade do furo / Trecho ensaiado</strong>${fmtNumBR(num(reg.profundidade))} m / ${fmtNumBR(c.trechoM)} m</td>
+              <td><strong>Variação do NA — antes / depois</strong>${fmtNumBR(0, 2)} cm / ${fmtNumBR(naDepois, 2)} cm</td>
+            </tr>
+            ${coordRow}
+            <tr>
+              <td colspan="2"><strong>Responsável</strong>${esc(reg.responsavel || "—")}</td>
+              <td><strong>Verificado</strong>${esc(reg.verificado || "—")}</td>
+            </tr>
+          </table>
+
+          <div class="ens-corpo">
+            <div class="ens-col-tab">
+              <table class="pp-table ens-tab">
+                <thead><tr><th>Hora</th><th>Tempo acum.</th><th>Variação do NA (cm)</th><th>Volume acum. (L)</th></tr></thead>
+                <tbody>${linhas || '<tr><td colspan="4">Sem leituras.</td></tr>'}</tbody>
+              </table>
+            </div>
+            <div class="ens-col-res">
+              <div class="ens-res-box">
+                <div class="ens-res-k">K = ${c.ok ? fmtCientifico(c.K) : "—"} cm/s</div>
+                <div class="ens-res-cls">${esc(c.ok ? c.classe : "")}</div>
+                <div class="ens-res-num">
+                  Δh/Δt = ${c.ok ? fmtCientifico(c.dh / c.dt) : "—"} cm/s ·
+                  Volume infiltrado ${c.ok ? fmtNumBR(c.volume, 3) : "—"} L ·
+                  Vazão média ${c.ok ? fmtNumBR(c.vazao, 4) : "—"} L/min
+                </div>
+              </div>
+              ${grafico ? `<img class="ens-grafico" src="${grafico}" alt="" />
+                <div class="ens-graf-leg"><span style="color:#1d4ed8">●—</span> leituras &nbsp;
+                  <span style="color:#9ca3af">- - -</span> taxa média adotada no cálculo</div>` : ""}
+              <div class="pp-section-label">Memória de cálculo</div>
+              ${memoria}
+              ${c.ok ? reguaClassificacao(c.K, rotulo) : ""}
+            </div>
+          </div>
+
+          ${reg.obs ? `<div class="pp-section-label">Observação</div>
+            <div style="font-size:9.5px;border:1px solid #999;padding:3px 5px;">${esc(reg.obs)}</div>` : ""}
+        </div>`;
+    }
+
     (async function init() {
       await carregarBanco();
       renderListaProjetos();
       renderListaDiario();
       renderListaSondagem();
+      renderListaEnsaio();
       adicionarCamada();
       adicionarVOC();
       preencherDatasHoje();
