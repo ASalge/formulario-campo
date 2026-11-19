@@ -1299,6 +1299,32 @@
             <div></div>
           </div>
 
+          <div class="section-title">Numeração inicial</div>
+          <p class="small-muted" style="margin-top:0;">
+            Para campanhas que continuam uma anterior. Ex.: se as sondagens
+            começam em ST-05, informe 5.
+          </p>
+          <div class="row">
+            <div>
+              <label for="proj-ini-st">1ª sondagem (ST-)</label>
+              <input type="number" inputmode="numeric" min="1" max="999"
+                     id="proj-ini-st" placeholder="1" />
+            </div>
+            <div>
+              <label for="proj-ini-pm">1º poço (PM-)</label>
+              <input type="number" inputmode="numeric" min="1" max="999"
+                     id="proj-ini-pm" placeholder="1" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="proj-ini-ep">1º ensaio (EP-)</label>
+              <input type="number" inputmode="numeric" min="1" max="999"
+                     id="proj-ini-ep" placeholder="1" />
+            </div>
+            <div></div>
+          </div>
+
           <div class="btn-group">
             <button type="submit" class="btn-primary">Salvar projeto</button>
             <button
@@ -4172,6 +4198,27 @@
       return "ST-" + String(i).padStart(2, "0");
     }
 
+    // Nomes da grade: os previstos (a partir da numeração inicial) mais
+    // qualquer registro já salvo no projeto com outro nome (ex.: renomeado).
+    function nomesGrade(prefixo, inicio, qtd, salvos) {
+      const nomes = [];
+      for (let i = 0; i < (qtd || 0); i++) {
+        nomes.push(prefixo + "-" + String((inicio || 1) + i).padStart(2, "0"));
+      }
+      salvos.forEach((n) => {
+        if (n && !nomes.includes(n)) nomes.push(n);
+      });
+      return nomes.sort((a, b) => a.localeCompare(b, "pt", { numeric: true }));
+    }
+
+    function nomesSTProjeto(p) {
+      return nomesGrade("ST", p.iniST, p.qtdSond, sondagensDoProjeto(p.id).map((r) => r.idSond));
+    }
+
+    function nomesEPProjeto(p) {
+      return nomesGrade("EP", p.iniEP, p.qtdEns, ensaiosDoProjeto(p.id).map((r) => r.idEnsaio));
+    }
+
     function sondagensDoProjeto(pid) {
       return carregarRegistros(STORAGE_SONDAGEM).filter(
         (r) => r.projetoId === pid
@@ -4197,6 +4244,9 @@
         qtdSond: parseInt(document.getElementById("proj-qtd-sond").value, 10) || 0,
         qtdPocos: parseInt(document.getElementById("proj-qtd-pocos").value, 10) || 0,
         qtdEns: parseInt(document.getElementById("proj-qtd-ens").value, 10) || 0,
+        iniST: parseInt(document.getElementById("proj-ini-st").value, 10) || 1,
+        iniPM: parseInt(document.getElementById("proj-ini-pm").value, 10) || 1,
+        iniEP: parseInt(document.getElementById("proj-ini-ep").value, 10) || 1,
       };
       let lista = carregarRegistros(STORAGE_PROJETOS);
       if (editingProjetoId) {
@@ -4225,6 +4275,9 @@
       document.getElementById("proj-qtd-sond").value = p.qtdSond || "";
       document.getElementById("proj-qtd-pocos").value = p.qtdPocos || "";
       document.getElementById("proj-qtd-ens").value = p.qtdEns || "";
+      document.getElementById("proj-ini-st").value = p.iniST > 1 ? p.iniST : "";
+      document.getElementById("proj-ini-pm").value = p.iniPM > 1 ? p.iniPM : "";
+      document.getElementById("proj-ini-ep").value = p.iniEP > 1 ? p.iniEP : "";
       document.getElementById("projform-titulo").textContent = "Editar projeto";
       showSection("projForm");
     }
@@ -4264,10 +4317,7 @@
       document.getElementById("projdet-titulo").textContent =
         p.numero + (p.cliente ? " · " + p.cliente : "");
 
-      const feitas = [];
-      for (let i = 1; i <= p.qtdSond; i++) {
-        if (regs.some((r) => r.idSond === nomeST(i))) feitas.push(i);
-      }
+      const feitas = regs.map((r) => r.idSond);
       const partes = [];
       if (p.local) partes.push(p.local);
       partes.push(
@@ -4275,18 +4325,16 @@
       );
       partes.push(pocosFeitos + "/" + (p.qtdPocos || 0) + " poços instalados");
       const enss = ensaiosDoProjeto(p.id);
-      if (p.qtdEns) {
-        let feitosEns = 0;
-        for (let i = 1; i <= p.qtdEns; i++) if (enss.some((r) => r.idEnsaio === nomeEP(i))) feitosEns++;
-        partes.push(feitosEns + "/" + p.qtdEns + " ensaios de permeabilidade");
+      if (p.qtdEns || enss.length) {
+        partes.push(enss.length + "/" + (p.qtdEns || 0) + " ensaios de permeabilidade");
       }
       document.getElementById("projdet-info").textContent = partes.join(" · ");
 
       const gridEp = document.getElementById("projdet-eps");
-      document.getElementById("projdet-eps-wrap").classList.toggle("hidden", !p.qtdEns);
+      const nomesEP = nomesEPProjeto(p);
+      document.getElementById("projdet-eps-wrap").classList.toggle("hidden", !nomesEP.length);
       gridEp.innerHTML = "";
-      for (let i = 1; i <= (p.qtdEns || 0); i++) {
-        const nome = nomeEP(i);
+      for (const nome of nomesEP) {
         const reg = enss.find((r) => r.idEnsaio === nome);
         const c = reg ? calcularEnsaio(reg) : null;
         const b = document.createElement("button");
@@ -4301,8 +4349,7 @@
 
       const grid = document.getElementById("projdet-sts");
       grid.innerHTML = "";
-      for (let i = 1; i <= p.qtdSond; i++) {
-        const nome = nomeST(i);
+      for (const nome of nomesSTProjeto(p)) {
         const reg = regs.find((r) => r.idSond === nome);
         const b = document.createElement("button");
         b.type = "button";
@@ -4467,10 +4514,7 @@
         .reverse()
         .forEach((p) => {
           const regs = sondagensDoProjeto(p.id);
-          const feitas = [];
-          for (let i = 1; i <= p.qtdSond; i++) {
-            if (regs.some((r) => r.idSond === nomeST(i))) feitas.push(i);
-          }
+          const feitas = regs.map((r) => r.idSond);
           const pocosFeitos = regs.filter((r) => r.poco).length;
           const div = document.createElement("div");
           div.className = "record";
@@ -4502,8 +4546,15 @@
           // Sugere o próximo PM com base nos poços já instalados no projeto
           const pid = Number(document.getElementById("sond-projetoid").value) || null;
           if (pid) {
-            const n = sondagensDoProjeto(pid).filter((r) => r.poco).length;
-            idPoco.value = "PM-" + String(n + 1).padStart(2, "0");
+            const proj = carregarRegistros(STORAGE_PROJETOS).find((x) => x.id === pid);
+            const usados = new Set(
+              sondagensDoProjeto(pid)
+                .filter((r) => r.poco && r.id !== editingSondagemId)
+                .map((r) => r.poco.id)
+            );
+            let n = (proj && proj.iniPM) || 1;
+            while (usados.has("PM-" + String(n).padStart(2, "0"))) n++;
+            idPoco.value = "PM-" + String(n).padStart(2, "0");
           }
           idPoco.focus();
           idPoco.select && idPoco.select();
@@ -4718,11 +4769,38 @@
           const dados = JSON.parse(reader.result);
           const novosDiario = Array.isArray(dados.diario) ? dados.diario : [];
           const novosSond = Array.isArray(dados.sondagem) ? dados.sondagem : [];
+          // Registros que já existem neste aparelho com conteúdo diferente
+          const chaves = [
+            [STORAGE_PROJETOS, dados.projetos],
+            [STORAGE_DIARIO, novosDiario],
+            [STORAGE_SONDAGEM, novosSond],
+            [STORAGE_ENSAIOS, dados.ensaios],
+          ];
+          const diferentes = [];
+          chaves.forEach(([key, novos]) => {
+            const atual = carregarRegistros(key);
+            (Array.isArray(novos) ? novos : []).forEach((r) => {
+              const ex = r && atual.find((a) => a.id === r.id);
+              if (ex && JSON.stringify(ex) !== JSON.stringify(r)) {
+                diferentes.push(r.idSond || r.idEnsaio || r.numero || r.data || "registro");
+              }
+            });
+          });
+          const substituir =
+            diferentes.length > 0 &&
+            confirm(
+              "O arquivo traz " + diferentes.length +
+                " registro(s) que já existem neste aparelho com conteúdo diferente (" +
+                diferentes.slice(0, 6).join(", ") + (diferentes.length > 6 ? "…" : "") +
+                ").\n\nOK = substituir pelos do arquivo · Cancelar = manter os deste aparelho"
+            );
           const mesclar = (key, novos) => {
             const atual = carregarRegistros(key);
-            const ids = new Set(atual.map((r) => r.id));
             novos.forEach((r) => {
-              if (r && r.id && !ids.has(r.id)) atual.push(r);
+              if (!r || !r.id) return;
+              const i = atual.findIndex((a) => a.id === r.id);
+              if (i === -1) atual.push(r);
+              else if (substituir) atual[i] = r;
             });
             salvarRegistros(key, atual);
             return atual.length;
@@ -4748,8 +4826,11 @@
           renderListaDiario();
           renderListaSondagem();
           renderListaProjetos();
+          renderListaEnsaio();
           alert(
-            "Backup importado (registros novos mesclados, sem duplicar).\nDiário: " +
+            "Backup importado" +
+              (substituir ? " (" + diferentes.length + " registro(s) atualizados)" : " (registros novos mesclados, sem duplicar)") +
+              ".\nDiário: " +
               td +
               " registros · Sondagens: " +
               ts +
