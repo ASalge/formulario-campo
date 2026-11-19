@@ -1228,6 +1228,9 @@
         class="hidden"
         onchange="importarBackup(this)"
       />
+      <p class="small-muted" style="margin:14px 0 0 0;text-align:right;">
+        Versão do app: <span id="app-versao"></span>
+      </p>
     </section>
 
     <!-- Cadastro / edição de projeto -->
@@ -7363,6 +7366,8 @@
         </div>`;
     }
 
+    const APP_VERSAO = "2026-11-18b";
+
     (async function init() {
       await carregarBanco();
       renderListaProjetos();
@@ -7376,12 +7381,14 @@
       atualizarHoraEvento();
       configurarNavegacaoVoltar();
       instalarTexturasPoco();
+      const elVersao = document.getElementById("app-versao");
+      if (elVersao) elVersao.textContent = APP_VERSAO;
       window.__pronto = true;
 
       // Service worker: deixa o app abrir 100% offline
       if ("serviceWorker" in navigator) {
         try {
-          navigator.serviceWorker.register("sw.js");
+          navigator.serviceWorker.register("sw.js").then((reg) => reg.update()).catch(() => {});
         } catch (e) {
           // sem suporte ou arquivo ausente: o app segue funcionando online
         }
