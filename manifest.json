@@ -1,15 +1,16 @@
 {
-  "name": "Formulários de Campo",
+  "name": "Formulários de campo · Archipel",
   "short_name": "Campo",
+  "description": "Diário de atividades, boletins de sondagem e poço, ensaios de permeabilidade e relatórios em PDF, offline.",
+  "lang": "pt-BR",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#111827",
+  "background_color": "#13294B",
+  "theme_color": "#13294B",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
