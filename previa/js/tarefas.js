@@ -985,7 +985,10 @@ function proximaNotificacao() {
   };
   el.addEventListener("click", () => {
     fechar();
-    if (n.aoTocar) n.aoTocar();
+    if (!n.aoTocar) return;
+    // O aviso leva direto ao conteúdo: fecha o que estiver aberto por cima
+    while (Folhas.topo()) Folhas.topo().fechar(null);
+    n.aoTocar();
   });
   let y0 = null;
   el.addEventListener("touchstart", (e) => (y0 = e.touches[0].clientY), { passive: true });

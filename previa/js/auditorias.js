@@ -424,7 +424,8 @@ function renderAuditoria() {
 
 function auMostrarEstado(reg) {
   let txt = "";
-  if (reg && reg.atualizadoEm) txt = Date.now() - reg.atualizadoEm < 50000 ? "Salvo" : "Salvo " + tempoRelativo(reg.atualizadoEm);
+  // Só confirma o salvamento das alterações recentes (desta sessão)
+  if (reg && reg.atualizadoEm && Date.now() - reg.atualizadoEm < 10 * 60000) txt = "Salvo";
   ["au-estado", "as-estado"].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = txt ? ic("save", "i-p") + esc(txt) : "";

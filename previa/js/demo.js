@@ -19,6 +19,14 @@ function proximoDiaDoMes(dia, aPartirDe) {
   return dataParaISO(d);
 }
 
+// Primeiro dia útil depois da data
+function diaUtilApos(iso) {
+  const d = isoParaData(iso);
+  do d.setDate(d.getDate() + 1);
+  while (d.getDay() === 0 || d.getDay() === 6);
+  return dataParaISO(d);
+}
+
 function ddmm(iso) {
   const p = partesData(iso);
   return p ? pad2(p.dia) + "/" + pad2(p.mes) : "";
@@ -120,7 +128,7 @@ const CENARIOS_DEMO = [
       {
         titulo: "Cobrar as licenças de operação da Indústria Alfa, se não chegarem",
         responsavel: "ralf",
-        prazo: () => somarDiasA(proximoDiaDoMes(5), 1),
+        prazo: () => diaUtilApos(proximoDiaDoMes(5)),
         prazoTexto: "a cliente envia “até o dia 5”",
         confianca: "média",
         porque: "Acompanhamento sugerido",
