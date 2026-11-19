@@ -1,0 +1,16 @@
+{
+  "name": "Archipel · prévia do app",
+  "short_name": "Archipel prévia",
+  "description": "Prévia do app da Archipel: auditorias, tarefas e assistente. Dados próprios, separados do app de campo.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#13294B",
+  "theme_color": "#13294B",
+  "icons": [
+    { "src": "../icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

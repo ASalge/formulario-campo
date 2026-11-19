@@ -1,0 +1,630 @@
+/* =========================================================================
+   Documentos (PDF) — folha A4 com 190 × 277 mm de área útil.
+   Cada .pp-page vira uma página do PDF. Identidade Archipel.
+   ========================================================================= */
+
+.pp-page {
+  --pp-navy: #13294b;
+  --pp-teal: #004f71;
+  --pp-rotulo: #3f6f84;
+  --pp-texto: #1f2f45;
+  --pp-texto-2: #3c4a5a;
+  --pp-linha: #c3cfd8;
+  --pp-zebra: #f3f6f8;
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--pp-texto);
+  width: 190mm;
+  min-height: 277mm;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.pp-conteudo {
+  flex: 1 1 auto;
+}
+
+/* Cabeçalho: título à esquerda, logotipo no canto superior direito */
+.pp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10mm;
+  padding-bottom: 2.6mm;
+  border-bottom: 0.7mm solid var(--pp-navy);
+  margin-bottom: 3.2mm;
+}
+.pp-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--pp-navy);
+}
+.pp-sub {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--pp-rotulo);
+  margin-top: 1mm;
+}
+.pp-logo {
+  height: 6.6mm;
+  width: auto;
+  display: block;
+  flex: none;
+  margin-bottom: 0.6mm;
+}
+
+/* Rodapé: referência à esquerda, marca e página à direita */
+.pp-foot {
+  margin-top: auto;
+  padding-top: 2.4mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 7.5px;
+  color: #6b7b8a;
+  border-top: 0.3mm solid var(--pp-linha);
+}
+.pp-foot-marca {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--pp-navy);
+}
+.pp-foot-marca b {
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #6b7b8a;
+  margin-left: 2mm;
+}
+
+/* Identificação */
+.pp-info {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 3mm;
+}
+.pp-info td {
+  border: 0.75px solid var(--pp-linha);
+  padding: 1.1mm 1.8mm 1.2mm;
+  font-size: 9.6px;
+  line-height: 1.25;
+  vertical-align: top;
+  color: var(--pp-texto);
+}
+.pp-info td strong {
+  display: block;
+  font-size: 7.4px;
+  font-weight: 600;
+  color: var(--pp-rotulo);
+  margin-bottom: 0.3mm;
+}
+
+.pp-section-label {
+  font-size: 9.8px;
+  font-weight: 600;
+  color: var(--pp-navy);
+  margin: 2.6mm 0 1.4mm;
+}
+
+/* Tabelas */
+.pp-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.pp-table th,
+.pp-table td {
+  border: 0.75px solid var(--pp-linha);
+  padding: 2px 4px;
+  font-size: 9px;
+  vertical-align: top;
+  text-align: left;
+  line-height: 1.3;
+}
+.pp-table th {
+  background: var(--pp-navy);
+  border-color: var(--pp-navy);
+  color: #fff;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.pp-table tbody tr:nth-child(even) td {
+  background: var(--pp-zebra);
+}
+.pp-table tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.pp-table-dense {
+  table-layout: fixed;
+  width: 100%;
+  max-width: 100%;
+}
+.pp-table-dense th,
+.pp-table-dense td {
+  padding: 1px 3px;
+  font-size: 7.8px;
+  text-align: center;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.pp-table-dense th {
+  font-weight: 600;
+}
+.pp-table-dense td.pp-par-ini {
+  border-left: 1.4px solid var(--pp-navy);
+}
+.pp-table-dense th.pp-par-ini {
+  border-left: 1.4px solid #6399ae;
+}
+
+.pp-caixa {
+  border: 0.75px solid var(--pp-linha);
+  padding: 1.4mm 2mm;
+  white-space: pre-line;
+}
+
+/* ---------- Perfil ---------- */
+.pp-body {
+  display: flex;
+  gap: 4mm;
+  align-items: flex-start;
+}
+.pp-colwrap {
+  flex: none;
+  padding-top: 1.2mm;
+}
+.pp-col {
+  position: relative;
+  border: 1px solid var(--pp-navy);
+  background: #fbfbfa;
+  margin-left: 9mm;
+}
+.pp-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 0.7px solid var(--pp-navy);
+}
+.pp-band .pp-band-n {
+  font-size: 7.2px;
+  font-weight: 600;
+  padding: 0 2px;
+  color: var(--pp-navy);
+  background: rgba(255, 255, 255, 0.86);
+  border-radius: 2px;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  line-height: 1.25;
+}
+.pp-tick {
+  position: absolute;
+  left: -9mm;
+  width: 8mm;
+  text-align: right;
+  font-size: 7.2px;
+  color: var(--pp-texto-2);
+  line-height: 1.2;
+}
+.pp-na {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1.5px dashed var(--pp-teal);
+  color: var(--pp-teal);
+  font-size: 7.2px;
+  text-align: right;
+  padding: 0 2px 0 0;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.pp-na span {
+  position: absolute;
+  right: 1px;
+  bottom: 0.5mm;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.86);
+  padding: 0 1.5px;
+  border-radius: 2px;
+}
+.pp-well {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.pp-w-seg {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.pp-w-prefiltro {
+  background-color: rgba(255, 252, 240, 0.42);
+  background-image: radial-gradient(#6b5c34 0.55px, transparent 0.65px);
+  background-size: 2.4px 2.4px;
+  border-left: 0.8px solid #6b5c34;
+  border-right: 0.8px solid #6b5c34;
+}
+.pp-w-tubo {
+  background: rgba(255, 255, 255, 0.6);
+  border-left: 1.3px solid #111;
+  border-right: 1.3px solid #111;
+}
+.pp-w-filtro {
+  background-color: rgba(255, 255, 255, 0.6);
+  background-image: repeating-linear-gradient(to bottom, #111 0 0.7px, transparent 0.7px 2.4px);
+  border-left: 1.3px solid #111;
+  border-right: 1.3px solid #111;
+}
+.pp-w-fundo {
+  background: #111;
+}
+.pp-w-na {
+  position: absolute;
+  font-size: 6.8px;
+  font-weight: 700;
+  color: var(--pp-teal);
+  white-space: nowrap;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.86);
+  padding: 0.3px 1.5px;
+  border-radius: 2px;
+}
+.pp-legend {
+  font-size: 7.2px;
+  color: var(--pp-texto-2);
+  margin-top: 4mm;
+  padding-top: 1.6mm;
+  border-top: 0.5px solid var(--pp-linha);
+  line-height: 1.65;
+}
+.pp-legend i {
+  display: inline-block;
+  width: 9px;
+  height: 7px;
+  border: 1px solid #111;
+  vertical-align: -1px;
+  margin-right: 2px;
+}
+.pp-direita {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Fotos */
+.pp-fotos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm;
+}
+.pp-foto {
+  border: 0.75px solid var(--pp-linha);
+  padding: 1.2mm;
+  break-inside: avoid;
+}
+.pp-foto img {
+  width: 100%;
+  height: 74mm;
+  object-fit: contain;
+  display: block;
+  background: #f3f6f8;
+}
+.pp-foto div {
+  font-size: 8.6px;
+  text-align: center;
+  padding-top: 1mm;
+  color: var(--pp-texto-2);
+}
+
+/* ---------- Ensaio de permeabilidade ---------- */
+.ens-corpo {
+  display: flex;
+  gap: 6mm;
+  align-items: flex-start;
+}
+.ens-col-tab {
+  width: 74mm;
+  flex: none;
+}
+.ens-col-res {
+  flex: 1;
+  min-width: 0;
+}
+.ens-tab th,
+.ens-tab td {
+  text-align: center;
+  font-size: 8.6px;
+  padding: 1.5px 3px;
+  white-space: nowrap;
+}
+.ens-tab th {
+  white-space: normal;
+}
+.ens-res-box {
+  border: 1.4px solid var(--pp-navy);
+  border-radius: 2mm;
+  padding: 2.5mm 3mm;
+  margin-bottom: 3mm;
+}
+.ens-res-k {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--pp-navy);
+}
+.ens-res-cls {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--pp-teal);
+  margin-top: 1mm;
+}
+.ens-res-num {
+  font-size: 8.4px;
+  color: var(--pp-texto-2);
+  margin-top: 1mm;
+}
+.ens-grafico {
+  width: 100%;
+  display: block;
+  border: 0.75px solid var(--pp-linha);
+}
+.ens-graf-leg {
+  font-size: 7.4px;
+  color: var(--pp-texto-2);
+  margin-top: 1mm;
+}
+.ens-memo {
+  font-size: 9.2px;
+  border: 0.75px solid var(--pp-linha);
+  padding: 2mm 3mm;
+  line-height: 1.6;
+}
+.ens-memo-res {
+  font-weight: 700;
+  font-size: 10.4px;
+  color: var(--pp-navy);
+}
+.ens-memo-leg {
+  font-size: 7.4px;
+  color: var(--pp-texto-2);
+  line-height: 1.4;
+  margin-top: 1mm;
+}
+.ens-regua {
+  margin-top: 4mm;
+}
+.ens-regua-esc {
+  position: relative;
+  height: 9mm;
+  border-bottom: 1px solid var(--pp-navy);
+  font-size: 7.4px;
+}
+.ens-regua-esc span {
+  position: absolute;
+  bottom: 1mm;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.ens-regua-mk {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  color: var(--pp-teal);
+  font-size: 8px;
+  white-space: nowrap;
+}
+.ens-regua-faixas {
+  position: relative;
+  height: 9mm;
+  border-bottom: 1px solid var(--pp-navy);
+}
+.ens-regua-faixas div {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--pp-navy);
+  font-size: 7px;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1mm;
+}
+.ens-regua-faixas div:nth-child(1) {
+  background: #d6e6ed;
+}
+.ens-regua-faixas div:nth-child(2) {
+  background: #e6eff3;
+}
+.ens-regua-faixas div:nth-child(3) {
+  background: #f2f7f9;
+}
+.ens-regua-legenda {
+  font-size: 7px;
+  color: var(--pp-texto-2);
+  margin-top: 1mm;
+}
+
+/* ---------- Capa do relatório do projeto ---------- */
+.pp-capa-faixa {
+  background: var(--pp-navy);
+  color: #fff;
+  border-radius: 2.5mm;
+  height: 96mm;
+  position: relative;
+  overflow: hidden;
+  padding: 9mm 10mm;
+  display: flex;
+  flex-direction: column;
+}
+.pp-capa-faixa .pp-capa-estratos {
+  position: absolute;
+  right: -14mm;
+  top: 10mm;
+  height: 92mm;
+  width: auto;
+}
+.pp-capa-logo {
+  height: 8mm;
+  width: auto;
+  position: relative;
+  align-self: flex-start;
+}
+.pp-capa-titulo {
+  position: relative;
+  margin-top: auto;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.pp-capa-sub {
+  position: relative;
+  font-size: 13px;
+  color: #d7d2cb;
+  margin-top: 2mm;
+}
+.pp-capa-dados {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm 8mm;
+  margin: 8mm 0 6mm;
+}
+.pp-capa-dados div {
+  font-size: 10px;
+  color: var(--pp-texto);
+}
+.pp-capa-dados strong {
+  display: block;
+  font-size: 7.6px;
+  font-weight: 600;
+  color: var(--pp-rotulo);
+  margin-bottom: 0.6mm;
+}
+.pp-capa-numeros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3mm;
+  margin-bottom: 8mm;
+}
+.pp-capa-numeros div {
+  background: #eef3f5;
+  border-radius: 2mm;
+  padding: 3mm;
+  font-size: 8.6px;
+  color: var(--pp-texto-2);
+}
+.pp-capa-numeros b {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--pp-navy);
+  line-height: 1.1;
+}
+.pp-sumario {
+  width: 100%;
+  border-collapse: collapse;
+}
+.pp-sumario td {
+  padding: 2mm 0;
+  border-bottom: 0.75px solid var(--pp-linha);
+  font-size: 10px;
+  vertical-align: top;
+}
+.pp-sumario td:last-child {
+  text-align: right;
+  white-space: nowrap;
+  color: var(--pp-navy);
+  font-weight: 600;
+  padding-left: 6mm;
+}
+.pp-sumario small {
+  display: block;
+  font-size: 8.6px;
+  color: var(--pp-texto-2);
+  margin-top: 0.6mm;
+}
+
+@media print {
+  .pp-page {
+    min-height: 276mm;
+    page-break-after: always;
+    break-after: page;
+  }
+  .pp-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}
+
+/* ---------- Auditoria (registro de campo) ---------- */
+.pp-au-resumo {
+  display: flex;
+  gap: 2mm;
+  margin: 0 0 1mm;
+}
+.pp-au-resumo div {
+  flex: 1;
+  border: 0.75px solid var(--pp-linha);
+  padding: 1.4mm 2mm;
+}
+.pp-au-resumo b {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pp-navy);
+  line-height: 1.2;
+}
+.pp-au-resumo span {
+  font-size: 7.6px;
+  color: var(--pp-rotulo);
+}
+.pp-au-resumo .pend b {
+  color: #8a5300;
+}
+.pp-au-tab {
+  table-layout: fixed;
+  margin-bottom: 1mm;
+}
+.pp-au-tab td {
+  font-size: 8.8px;
+  line-height: 1.32;
+  padding: 1mm 1.6mm;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.pp-au-perg {
+  color: var(--pp-texto-2);
+}
+.pp-au-pend {
+  color: #8a5300;
+  font-weight: 600;
+}
+.pp-au-nd {
+  color: #9aa7b2;
+}
+.pp-au-sub {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--pp-teal);
+  margin: 1.8mm 0 1mm;
+}
+.pp-au-vazio {
+  font-size: 8.8px;
+  color: #6b7b8a;
+  margin: 0 0 2mm;
+}
+.pp-au-fotos .pp-foto img {
+  height: 70mm;
+}
+.pp-au-fotos .pp-foto div {
+  text-align: left;
+  font-size: 8px;
+  line-height: 1.3;
+}
